@@ -36,27 +36,27 @@ export default function App() {
         {/* Stats */}
         <div className="stats-bar">
           <div className="stat-card">
-            <span className="stat-label">Total actividades</span>
+            <span className="stat-label">Total mes</span>
             <span className="stat-value accent">
-              {crm.loading ? '…' : crm.stats.total.toLocaleString('es-CO')}
+              {crm.loading ? '…' : crm.stats.totalMes.toLocaleString('es-CO')}
             </span>
           </div>
           <div className="stat-card">
-            <span className="stat-label">Realizadas</span>
+            <span className="stat-label">Gestión</span>
             <span className="stat-value green">
-              {crm.loading ? '…' : crm.stats.realizadas.toLocaleString('es-CO')}
-            </span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-label">En proceso</span>
-            <span className="stat-value amber">
-              {crm.loading ? '…' : crm.stats.enProceso.toLocaleString('es-CO')}
+              {crm.loading ? '…' : crm.stats.gestion.toLocaleString('es-CO')}
             </span>
           </div>
           <div className="stat-card">
             <span className="stat-label">Visitas</span>
-            <span className="stat-value">
+            <span className="stat-value amber">
               {crm.loading ? '…' : crm.stats.visitas.toLocaleString('es-CO')}
+            </span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-label">Llamadas</span>
+            <span className="stat-value">
+              {crm.loading ? '…' : crm.stats.llamadas.toLocaleString('es-CO')}
             </span>
           </div>
           <div className="stat-card">

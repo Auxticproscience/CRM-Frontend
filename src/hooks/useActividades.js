@@ -104,11 +104,17 @@ export function useActividades() {
 
   // Stats
   const stats = useMemo(() => {
-    const total      = data.length
-    const realizadas = data.filter(r => r.estado === 'Realizada').length
-    const enProceso  = data.filter(r => r.estado === 'En Proceso').length
-    const visitas    = data.filter(r => r.tipo   === 'Visita').length
-    return { total, realizadas, enProceso, visitas }
+    const now     = new Date()
+    const mes     = now.getMonth()
+    const anio    = now.getFullYear()
+    const totalMes = data.filter(r => {
+      const d = new Date(r.fechaCreacion)
+      return d.getMonth() === mes && d.getFullYear() === anio
+    }).length
+    const gestion  = data.filter(r => r.tipo === 'Gestión').length
+    const visitas  = data.filter(r => r.tipo === 'Visita').length
+    const llamadas = data.filter(r => r.tipo === 'Llamadas').length
+    return { totalMes, gestion, visitas, llamadas }
   }, [data])
 
   return {
