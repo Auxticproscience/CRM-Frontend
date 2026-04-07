@@ -1,0 +1,123 @@
+import { useState, useEffect } from 'react'
+import { useActividades } from './hooks/useActividades.js'
+import { FilterBar }        from './components/FilterBar.jsx'
+import { ActividadesTable } from './components/ActividadesTable.jsx'
+import { Pagination }       from './components/Pagination.jsx'
+import { Badge }            from './components/Badge.jsx'
+
+const PAGE_SIZE = 25
+
+export default function App() {
+  const crm = useActividades()
+  const [now, setNow] = useState('')
+
+  useEffect(() => {
+    const tick = () => setNow(new Date().toLocaleString('es-CO', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    }))
+    tick()
+    const id = setInterval(tick, 30_000)
+    return () => clearInterval(id)
+  }, [])
+
+  return (
+    <div className="app">
+      {/* Topbar */}
+      <header className="topbar">
+        <div className="topbar-brand">
+          <div className="dot" />
+          CRM · Gestión por Zonas
+        </div>
+        <span className="topbar-meta">{now}</span>
+      </header>
+
+      <main className="main">
+        {/* Stats */}
+        <div className="stats-bar">
+          <div className="stat-card">
+            <span className="stat-label">Total actividades</span>
+            <span className="stat-value accent">
+              {crm.loading ? '…' : crm.stats.total.toLocaleString('es-CO')}
+            </span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-label">Realizadas</span>
+            <span className="stat-value green">
+              {crm.loading ? '…' : crm.stats.realizadas.toLocaleString('es-CO')}
+            </span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-label">En proceso</span>
+            <span className="stat-value amber">
+              {crm.loading ? '…' : crm.stats.enProceso.toLocaleString('es-CO')}
+            </span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-label">Visitas</span>
+            <span className="stat-value">
+              {crm.loading ? '…' : crm.stats.visitas.toLocaleString('es-CO')}
+            </span>
+          </div>
+          <div className="stat-card">
+            <span className="stat-label">Filtrados</span>
+            <span className="stat-value">
+              {crm.loading ? '…' : crm.filtered.length.toLocaleString('es-CO')}
+            </span>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <FilterBar
+          options={crm.options}
+          search={crm.search} setSearch={crm.setSearch}
+          filterEstado={crm.filterEstado} setFilterEstado={crm.setFilterEstado}
+          filterTipo={crm.filterTipo} setFilterTipo={crm.setFilterTipo}
+          filterPropietario={crm.filterPropietario} setFilterPropietario={crm.setFilterPropietario}
+          filterCliente={crm.filterCliente} setFilterCliente={crm.setFilterCliente}
+          dateFrom={crm.dateFrom} setDateFrom={crm.setDateFrom}
+          dateTo={crm.dateTo} setDateTo={crm.setDateTo}
+          activeFilters={crm.activeFilters}
+          clearFilters={crm.clearFilters}
+          onChangePage={crm.setPage}
+        />
+
+        {/* Table */}
+        <div className="table-section">
+          <div className="table-header">
+            <span className="table-title">
+              Actividades
+              <span className="count-badge">{crm.filtered.length}</span>
+            </span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
+              Página {crm.page} de {crm.totalPages}
+            </span>
+          </div>
+
+          <ActividadesTable
+            rows={crm.paginated}
+            loading={crm.loading}
+            sortKey={crm.sortKey}
+            sortDir={crm.sortDir}
+            toggleSort={crm.toggleSort}
+          />
+
+          <Pagination
+            page={crm.page}
+            totalPages={crm.totalPages}
+            total={crm.filtered.length}
+            pageSize={PAGE_SIZE}
+            onPage={crm.setPage}
+          />
+        </div>
+      </main>
+
+      {/* Error toast */}
+      {crm.error && (
+        <div className="toast">
+          ⚠ {crm.error}
+        </div>
+      )}
+    </div>
+  )
+}
