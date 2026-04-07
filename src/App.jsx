@@ -36,7 +36,13 @@ export default function App() {
         {/* Stats */}
         <div className="stats-bar">
           <div className="stat-card">
-            <span className="stat-label">Total mes</span>
+            <span className="stat-label">
+              Total · {crm.dateFrom && crm.dateTo
+                ? `${crm.dateFrom} → ${crm.dateTo}`
+                : crm.dateFrom ? `desde ${crm.dateFrom}`
+                : crm.dateTo   ? `hasta ${crm.dateTo}`
+                : 'período'}
+            </span>
             <span className="stat-value accent">
               {crm.loading ? '…' : crm.stats.totalMes.toLocaleString('es-CO')}
             </span>

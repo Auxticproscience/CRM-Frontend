@@ -1,27 +1,39 @@
 import { useState, useEffect, useMemo } from 'react'
 import { fetchActividades } from '../utils/api'
 
+// Primer y último día del mes actual como string YYYY-MM-DD
+function mesActual() {
+  const now   = new Date()
+  const y     = now.getFullYear()
+  const m     = String(now.getMonth() + 1).padStart(2, '0')
+  const last  = new Date(y, now.getMonth() + 1, 0).getDate()
+  return { from: `${y}-${m}-01`, to: `${y}-${m}-${last}` }
+}
+
 export function useActividades() {
   const [data, setData]       = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
 
-  // Filters
-  const [search, setSearch]           = useState('')
-  const [filterEstado, setFilterEstado]   = useState('')
-  const [filterTipo, setFilterTipo]       = useState('')
+  // Filtros
+  const [search, setSearch]                       = useState('')
+  const [filterEstado, setFilterEstado]           = useState('')
+  const [filterTipo, setFilterTipo]               = useState('')
   const [filterPropietario, setFilterPropietario] = useState('')
-  const [filterCliente, setFilterCliente] = useState('')
-  const [dateFrom, setDateFrom]       = useState('')
-  const [dateTo, setDateTo]           = useState('')
+  const [filterCliente, setFilterCliente]         = useState('')
+
+  // Fechas — inician en el mes actual
+  const defaults = mesActual()
+  const [dateFrom, setDateFrom] = useState(defaults.from)
+  const [dateTo,   setDateTo]   = useState(defaults.to)
 
   // Sort
-  const [sortKey, setSortKey]   = useState('fechaCreacion')
-  const [sortDir, setSortDir]   = useState('desc')
+  const [sortKey, setSortKey] = useState('fechaCreacion')
+  const [sortDir, setSortDir] = useState('desc')
 
-  // Pagination
-  const [page, setPage]     = useState(1)
-  const PAGE_SIZE           = 25
+  // Paginación
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE       = 25
 
   useEffect(() => {
     setLoading(true)
@@ -31,7 +43,7 @@ export function useActividades() {
       .catch(e => { setError(e.message); setLoading(false) })
   }, [])
 
-  // Derived option lists from data
+  // Opciones de selects derivadas del total de datos
   const options = useMemo(() => {
     const set = k => [...new Set(data.map(r => r[k]).filter(Boolean))].sort()
     return {
@@ -48,21 +60,19 @@ export function useActividades() {
     if (search.trim()) {
       const q = search.toLowerCase()
       rows = rows.filter(r =>
-        (r.nombre       || '').toLowerCase().includes(q) ||
-        (r.descripcion  || '').toLowerCase().includes(q) ||
-        (r.cliente      || '').toLowerCase().includes(q) ||
-        (r.lugar        || '').toLowerCase().includes(q)
+        (r.nombre      || '').toLowerCase().includes(q) ||
+        (r.descripcion || '').toLowerCase().includes(q) ||
+        (r.cliente     || '').toLowerCase().includes(q) ||
+        (r.lugar       || '').toLowerCase().includes(q)
       )
     }
     if (filterEstado)      rows = rows.filter(r => r.estado      === filterEstado)
     if (filterTipo)        rows = rows.filter(r => r.tipo        === filterTipo)
     if (filterPropietario) rows = rows.filter(r => r.propietario === filterPropietario)
     if (filterCliente)     rows = rows.filter(r => r.cliente     === filterCliente)
+    if (dateFrom)          rows = rows.filter(r => r.fechaCreacion >= dateFrom)
+    if (dateTo)            rows = rows.filter(r => r.fechaCreacion <= dateTo + 'T23:59:59')
 
-    if (dateFrom) rows = rows.filter(r => r.fechaCreacion >= dateFrom)
-    if (dateTo)   rows = rows.filter(r => r.fechaCreacion <= dateTo + 'T23:59:59')
-
-    // Sort
     rows = [...rows].sort((a, b) => {
       const va = a[sortKey] ?? ''
       const vb = b[sortKey] ?? ''
@@ -87,35 +97,30 @@ export function useActividades() {
   }
 
   function clearFilters() {
+    const d = mesActual()
     setSearch(''); setFilterEstado(''); setFilterTipo('')
     setFilterPropietario(''); setFilterCliente('')
-    setDateFrom(''); setDateTo(''); setPage(1)
+    setDateFrom(d.from); setDateTo(d.to); setPage(1)
   }
 
   const activeFilters = [
-    search         && { key: 'search',      label: `"${search}"`,       clear: () => setSearch('') },
-    filterEstado   && { key: 'estado',      label: filterEstado,        clear: () => setFilterEstado('') },
-    filterTipo     && { key: 'tipo',        label: filterTipo,          clear: () => setFilterTipo('') },
-    filterPropietario && { key: 'prop',     label: filterPropietario,   clear: () => setFilterPropietario('') },
-    filterCliente  && { key: 'cliente',     label: filterCliente,       clear: () => setFilterCliente('') },
-    dateFrom       && { key: 'from',        label: `Desde ${dateFrom}`, clear: () => setDateFrom('') },
-    dateTo         && { key: 'to',          label: `Hasta ${dateTo}`,   clear: () => setDateTo('') },
+    search            && { key: 'search',  label: `"${search}"`,       clear: () => setSearch('') },
+    filterEstado      && { key: 'estado',  label: filterEstado,        clear: () => setFilterEstado('') },
+    filterTipo        && { key: 'tipo',    label: filterTipo,          clear: () => setFilterTipo('') },
+    filterPropietario && { key: 'prop',    label: filterPropietario,   clear: () => setFilterPropietario('') },
+    filterCliente     && { key: 'cliente', label: filterCliente,       clear: () => setFilterCliente('') },
+    dateFrom          && { key: 'from',    label: `Desde ${dateFrom}`, clear: () => setDateFrom('') },
+    dateTo            && { key: 'to',      label: `Hasta ${dateTo}`,   clear: () => setDateTo('') },
   ].filter(Boolean)
 
-  // Stats
+  // Stats — calculadas sobre los registros YA filtrados por fecha (y los demás filtros activos)
   const stats = useMemo(() => {
-    const now     = new Date()
-    const mes     = now.getMonth()
-    const anio    = now.getFullYear()
-    const totalMes = data.filter(r => {
-      const d = new Date(r.fechaCreacion)
-      return d.getMonth() === mes && d.getFullYear() === anio
-    }).length
-    const gestion  = data.filter(r => r.tipo === 'Gestión').length
-    const visitas  = data.filter(r => r.tipo === 'Visita').length
-    const llamadas = data.filter(r => r.tipo === 'Llamadas').length
+    const gestion  = filtered.filter(r => r.tipo === 'Gestión').length
+    const visitas  = filtered.filter(r => r.tipo === 'Visita').length
+    const llamadas = filtered.filter(r => r.tipo === 'Llamadas').length
+    const totalMes = gestion + visitas + llamadas
     return { totalMes, gestion, visitas, llamadas }
-  }, [data])
+  }, [filtered])
 
   return {
     loading, error, options, filtered, paginated,
