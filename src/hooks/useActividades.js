@@ -97,11 +97,15 @@ export function useActividades() {
   }
 
   function clearFilters() {
-    const d = mesActual()
-    setSearch(''); setFilterEstado(''); setFilterTipo('')
-    setFilterPropietario(''); setFilterCliente('')
-    setDateFrom(d.from); setDateTo(d.to); setPage(1)
-  }
+  setSearch('')
+  setFilterEstado('')
+  setFilterTipo('')
+  setFilterPropietario('')
+  setFilterCliente('')
+  setDateFrom('')
+  setDateTo('')
+  setPage(1)
+}
 
   const activeFilters = [
     search            && { key: 'search',  label: `"${search}"`,       clear: () => setSearch('') },
