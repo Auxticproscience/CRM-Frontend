@@ -1,5 +1,5 @@
 import { useState } from "react";
-import GestionesView from "./views/GestionesView";
+/* import GestionesView from "./views/GestionesView"; */
 
 // Pantalla temporal para módulos en construcción
 function ComingSoon({ title }) {
