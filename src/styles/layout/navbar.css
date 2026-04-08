@@ -1,0 +1,62 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 1.5rem;
+  height: 60px;
+
+  background: rgba(15,17,23,0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.navbar-logo {
+  height: 32px;   /* 👈 AQUÍ arreglas el logo gigante */
+  width: auto;
+  object-fit: contain;
+}
+
+.navbar-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+}
+
+.navbar-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-tab {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-3);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.nav-tab:hover {
+  background: var(--bg-3);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.nav-tab.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}

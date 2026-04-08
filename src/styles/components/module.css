@@ -1,0 +1,36 @@
+.module-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.module-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.module-card span:first-child {
+  font-size: 1.5rem;
+}
+
+.module-card span:nth-child(2) {
+  font-weight: 600;
+}
+
+.module-card span:nth-child(3) {
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+.module-card--soon {
+  opacity: 0.6;
+}

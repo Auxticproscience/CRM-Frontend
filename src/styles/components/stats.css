@@ -1,0 +1,30 @@
+/* ── Stats bar ── */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 1.25rem;
+}
+
+.stat-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+  display: flex; flex-direction: column; gap: 2px;
+  transition: border-color 0.15s;
+}
+.stat-card:hover { border-color: var(--border-2); }
+
+.stat-label {
+  font-size: 0.72rem; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500;
+}
+.stat-value {
+  font-size: 1.6rem; font-weight: 600; letter-spacing: -0.03em;
+  color: var(--text); line-height: 1.2;
+  font-family: var(--font-mono);
+}
+.stat-value.accent { color: var(--accent); }
+.stat-value.green  { color: var(--green); }
+.stat-value.amber  { color: var(--amber); }

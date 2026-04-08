@@ -1,0 +1,12 @@
+.toast {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+  background: var(--bg-2); border: 1px solid var(--red);
+  border-radius: var(--radius-lg); padding: 0.9rem 1.25rem;
+  color: var(--red); font-size: 0.85rem; max-width: 360px;
+  box-shadow: var(--shadow);
+  animation: slideIn 0.2s ease;
+}
+@keyframes slideIn {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
