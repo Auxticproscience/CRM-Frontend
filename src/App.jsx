@@ -1,129 +1,110 @@
-import { useState, useEffect } from 'react'
-import { useActividades } from './hooks/useActividades.js'
-import { FilterBar }        from './components/FilterBar.jsx'
-import { ActividadesTable } from './components/ActividadesTable.jsx'
-import { Pagination }       from './components/Pagination.jsx'
-import { Badge }            from './components/Badge.jsx'
+import { useState } from "react";
+import GestionesView from "./views/GestionesView";
 
-const PAGE_SIZE = 25
+// Pantalla temporal para módulos en construcción
+function ComingSoon({ title }) {
+  return (
+    <div className="coming-soon">
+      <div className="coming-soon-icon">🚧</div>
+      <h2>{title}</h2>
+      <p>Módulo en construcción. Próximamente disponible.</p>
+    </div>
+  );
+}
 
-export default function App() {
-  const crm = useActividades()
-  const [now, setNow] = useState('')
+// Barra de navegación superior
+function Navbar({ page, setPage }) {
+  const tabs = [
+    { id: "gestiones", label: "Gestiones" },
+    { id: "pedidos",   label: "Pedidos" },
+    { id: "cotizaciones", label: "Cotizaciones" },
+  ];
+  return (
+    <nav className="navbar">
+      <div className="navbar-brand" onClick={() => setPage("landing")} style={{ cursor: "pointer" }}>
+        <img src="/images/logo.png" alt="Logo" className="navbar-logo" />
+        <span className="navbar-title">CRM ProScience</span>
+      </div>
+      <div className="navbar-tabs">
+        {tabs.map((t) => (
+          <button
+            key={t.id}
+            className={`nav-tab ${page === t.id ? "active" : ""}`}
+            onClick={() => setPage(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+}
 
-  useEffect(() => {
-    const tick = () => setNow(new Date().toLocaleString('es-CO', {
-      day: '2-digit', month: 'short', year: 'numeric',
-      hour: '2-digit', minute: '2-digit'
-    }))
-    tick()
-    const id = setInterval(tick, 30_000)
-    return () => clearInterval(id)
-  }, [])
+// Landing principal
+function LandingView({ setPage }) {
+  const modules = [
+    {
+      id: "gestiones",
+      label: "Gestiones",
+      desc: "Actividades diarias por zona y asesor",
+      icon: "📋",
+      ready: true,
+    },
+    {
+      id: "pedidos",
+      label: "Pedidos",
+      desc: "Seguimiento de pedidos por cliente",
+      icon: "📦",
+      ready: false,
+    },
+    {
+      id: "cotizaciones",
+      label: "Cotizaciones",
+      desc: "Registro y estado de cotizaciones",
+      icon: "💰",
+      ready: false,
+    },
+  ];
 
   return (
-    <div className="app">
-      {/* Topbar */}
-      <header className="topbar">
-        <div className="topbar-brand">
-          <div className="dot" />
-          CRM · Gestión por Zonas
-        </div>
-        <span className="topbar-meta">{now}</span>
-      </header>
-
-      <main className="main">
-        {/* Stats */}
-        <div className="stats-bar">
-          <div className="stat-card">
-            <span className="stat-label">
-              Total · {crm.dateFrom && crm.dateTo
-                ? `${crm.dateFrom} → ${crm.dateTo}`
-                : crm.dateFrom ? `desde ${crm.dateFrom}`
-                : crm.dateTo   ? `hasta ${crm.dateTo}`
-                : 'período'}
-            </span>
-            <span className="stat-value accent">
-              {crm.loading ? '…' : crm.stats.totalMes.toLocaleString('es-CO')}
-            </span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-label">Gestión</span>
-            <span className="stat-value green">
-              {crm.loading ? '…' : crm.stats.gestion.toLocaleString('es-CO')}
-            </span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-label">Visitas</span>
-            <span className="stat-value amber">
-              {crm.loading ? '…' : crm.stats.visitas.toLocaleString('es-CO')}
-            </span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-label">Llamadas</span>
-            <span className="stat-value">
-              {crm.loading ? '…' : crm.stats.llamadas.toLocaleString('es-CO')}
-            </span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-label">Filtrados</span>
-            <span className="stat-value">
-              {crm.loading ? '…' : crm.filtered.length.toLocaleString('es-CO')}
-            </span>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <FilterBar
-          options={crm.options}
-          search={crm.search} setSearch={crm.setSearch}
-          filterEstado={crm.filterEstado} setFilterEstado={crm.setFilterEstado}
-          filterTipo={crm.filterTipo} setFilterTipo={crm.setFilterTipo}
-          filterPropietario={crm.filterPropietario} setFilterPropietario={crm.setFilterPropietario}
-          filterCliente={crm.filterCliente} setFilterCliente={crm.setFilterCliente}
-          dateFrom={crm.dateFrom} setDateFrom={crm.setDateFrom}
-          dateTo={crm.dateTo} setDateTo={crm.setDateTo}
-          activeFilters={crm.activeFilters}
-          clearFilters={crm.clearFilters}
-          onChangePage={crm.setPage}
-        />
-
-        {/* Table */}
-        <div className="table-section">
-          <div className="table-header">
-            <span className="table-title">
-              Actividades
-              <span className="count-badge">{crm.filtered.length}</span>
-            </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
-              Página {crm.page} de {crm.totalPages}
-            </span>
-          </div>
-
-          <ActividadesTable
-            rows={crm.paginated}
-            loading={crm.loading}
-            sortKey={crm.sortKey}
-            sortDir={crm.sortDir}
-            toggleSort={crm.toggleSort}
-          />
-
-          <Pagination
-            page={crm.page}
-            totalPages={crm.totalPages}
-            total={crm.filtered.length}
-            pageSize={PAGE_SIZE}
-            onPage={crm.setPage}
-          />
-        </div>
-      </main>
-
-      {/* Error toast */}
-      {crm.error && (
-        <div className="toast">
-          ⚠ {crm.error}
-        </div>
-      )}
+    <div className="landing">
+      <div className="landing-header">
+        <img src="/images/logo.png" alt="Logo" className="landing-logo" />
+        <h1 className="landing-title">CRM ProScience</h1>
+        <p className="landing-subtitle">Gestión comercial por zonas</p>
+      </div>
+      <div className="landing-cards">
+        {modules.map((m) => (
+          <button
+            key={m.id}
+            className={`module-card ${!m.ready ? "module-card--soon" : ""}`}
+            onClick={() => setPage(m.id)}
+          >
+            <span className="module-icon">{m.icon}</span>
+            <span className="module-label">{m.label}</span>
+            <span className="module-desc">{m.desc}</span>
+            {!m.ready && <span className="module-badge">Próximamente</span>}
+          </button>
+        ))}
+      </div>
     </div>
-  )
+  );
+}
+
+export default function App() {
+  const [page, setPage] = useState("landing");
+
+  const showNavbar = page !== "landing";
+
+  return (
+    <div className="app-root">
+      {showNavbar && <Navbar page={page} setPage={setPage} />}
+      <main className="app-main">
+        {page === "landing"      && <LandingView setPage={setPage} />}
+        {page === "gestiones"    && <GestionesView />}
+        {page === "pedidos"      && <ComingSoon title="Pedidos" />}
+        {page === "cotizaciones" && <ComingSoon title="Cotizaciones" />}
+      </main>
+    </div>
+  );
 }
