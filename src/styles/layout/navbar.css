@@ -10,7 +10,7 @@
   padding: 0 1.5rem;
   height: 60px;
 
-  background: rgba(15,17,23,0.9);
+  background: var(--radius);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }
@@ -23,7 +23,7 @@
 }
 
 .navbar-logo {
-  height: 32px;   /* 👈 AQUÍ arreglas el logo gigante */
+  height: 32px;
   width: auto;
   object-fit: contain;
 }
@@ -42,7 +42,7 @@
 .nav-tab {
   background: transparent;
   border: 1px solid transparent;
-  color: var(--text-3);
+  color: var(--text-2);
   padding: 6px 12px;
   border-radius: var(--radius);
   cursor: pointer;
@@ -58,5 +58,5 @@
 .nav-tab.active {
   background: var(--accent);
   color: white;
-  border-color: var(--accent);
+  border-color: var(--bg-3);
 }

@@ -27,7 +27,6 @@ export default function GestionesView() {
       <header className="topbar">
         <div className="topbar-brand">
           <div className="dot" />
-          CRM · Gestión por Zonas
         </div>
         <span className="topbar-meta">{now}</span>
       </header>

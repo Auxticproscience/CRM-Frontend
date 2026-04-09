@@ -24,6 +24,7 @@
 
 .module-card span:nth-child(2) {
   font-weight: 600;
+  color: var(--text-3);
 }
 
 .module-card span:nth-child(3) {

@@ -66,7 +66,7 @@ export function FilterBar({
       </div>
 
       {/* Segunda fila: cliente + fechas */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '8px', marginTop: '8px' }}>
+      <div style={{ marginTop: '1rem' }}>
         <div className="field">
           <span className="field-lbl">Cliente</span>
           <select value={filterCliente} onChange={handle(setFilterCliente)}>

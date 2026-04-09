@@ -2,9 +2,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(15,17,23,0.85);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
   padding: 0 1.5rem;
   height: 56px;
   display: flex;
@@ -22,7 +20,10 @@
 }
 
 .topbar-meta {
-  font-size: 0.78rem;
-  color: var(--text-3);
-  font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    background-color: var(--border-2);
+    padding: 1rem;
+    border-radius: 1rem;
 }

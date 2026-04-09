@@ -1,9 +1,23 @@
 .landing {
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.landing::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35); /* ajusta 0.25 - 0.45 */
+  backdrop-filter: blur(2px);
+}
+
+.landing > * {
+  position: relative;
+  z-index: 2;
 }
 
 .landing-header {
@@ -12,24 +26,76 @@
 }
 
 .landing-logo {
-  width: 120px;
-  margin-bottom: 1rem;
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 10px;
 }
 
 .landing-title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
+  color: #fff;
 }
 
 .landing-subtitle {
   font-size: 0.9rem;
-  color: var(--text-3);
+  color: rgba(255,255,255,0.7);
 }
 
 .landing-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  width: 100%;
-  max-width: 600px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.module-card {
+  width: 180px;
+  padding: 1rem;
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255,255,255,0.2);
+
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.module-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  background: rgba(255, 255, 255, 0.363);
+  box-shadow: 0 10px 25px rgb(255, 255, 255);
+}
+
+.module-card span:nth-child(1) {
+  font-size: 1.8rem;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.module-card span:nth-child(2) {
+  font-weight: 600;
+  display: block;
+}
+
+.module-card span:nth-child(3) {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+@media (max-width: 600px) {
+  .landing-title {
+    font-size: 1.4rem;
+  }
+
+  .module-card {
+    width: 140px;
+    padding: 0.8rem;
+  }
 }
