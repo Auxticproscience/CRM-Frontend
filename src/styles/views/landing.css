@@ -103,7 +103,7 @@
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #3b82f6;
+  color: var(--bg);
 }
 
 .lp-title {
@@ -250,7 +250,7 @@
 /* ─── Footer ──────────────────────────────────────────────────── */
 .lp-footer {
   font-size: 0.75rem;
-  color: rgba(255,255,255,0.2);
+  color: var(--bg);
   letter-spacing: 0.02em;
 }
 
