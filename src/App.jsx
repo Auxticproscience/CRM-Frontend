@@ -3,6 +3,7 @@ import { Navbar } from "./components/Navbar"
 import { ComingSoon } from "./components/ComingSoon"
 import LandingView from "./views/LandingView"
 import GestionesView from "./views/GestionesView"
+import CotizacionesView from "./views/CotizacionesView"
 
 export default function App() {
   const [page, setPage] = useState("landing")
@@ -15,7 +16,7 @@ export default function App() {
         {page === "landing" && <LandingView setPage={setPage} />}
         {page === "gestiones" && <GestionesView />}
         {page === "pedidos" && <ComingSoon title="Pedidos" />}
-        {page === "cotizaciones" && <ComingSoon title="Cotizaciones" />}
+        {page === "cotizaciones" && <CotizacionesView />}
       </main>
     </div>
   )
