@@ -29,8 +29,6 @@ function fmtMoneda(val) {
   }).format(val)
 }
 
-// Definición de todas las columnas posibles
-// key debe coincidir exactamente con los keys del DTO
 const TODAS_LAS_COLS = [
   {
     key: 'fechaCreacion',
@@ -155,7 +153,7 @@ export function CotizacionesTable({
   rows, loading, sortKey, sortDir, toggleSort,
   colsVisibles, COLS_DISPONIBLES,
 }) {
-  
+
   const cols = TODAS_LAS_COLS.filter(c => colsVisibles.has(c.key))
 
   return (

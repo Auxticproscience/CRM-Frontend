@@ -181,7 +181,6 @@ td .truncate {
   font-size: 0.75rem;
 }
 
-/* spacing en header derecho */
 .table-header > div {
   display: flex;
   align-items: center;

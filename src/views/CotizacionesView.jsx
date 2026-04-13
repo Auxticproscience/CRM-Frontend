@@ -147,7 +147,6 @@ function CotizacionesFiltros({ crm }) {
   )
 }
 
-// ── Vista principal ───────────────────────────────────────────────
 export default function CotizacionesView() {
   const crm = useCotizaciones()
   const [now, setNow] = useState('')
@@ -173,9 +172,8 @@ export default function CotizacionesView() {
 
       <div className="main">
         <CotizacionesStats stats={crm.stats} />
-      </div>
-
-      <CotizacionesFiltros crm={crm} />
+        <CotizacionesFiltros crm={crm} />
+       </div>
 
       <div className="table-section">
         <div className="table-header">
