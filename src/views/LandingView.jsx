@@ -25,8 +25,8 @@ const modules = [
         <path d="M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/>
       </svg>
     ),
-    ready: false,
-    stat: "Próximamente",
+    ready: true,
+    stat: "Activo",
   },
   {
     id: "pedidos",
