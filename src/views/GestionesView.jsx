@@ -4,6 +4,7 @@ import { FilterBar }        from '../components/FilterBar.jsx'
 import { ActividadesTable } from '../components/ActividadesTable.jsx'
 import { Pagination }       from '../components/Pagination.jsx'
 import { StatsBar } from '../components/StatsBar'
+import AppLoader from '../components/AppLoader.jsx'
 
 const PAGE_SIZE = 25
 
@@ -23,7 +24,7 @@ export default function GestionesView() {
 
   return (
     <>
-      {/* Topbar ORIGINAL */}
+    <AppLoader loading={crm.loading} />
       <header className="topbar">
         <div className="topbar-brand">
           <div className="dot" />

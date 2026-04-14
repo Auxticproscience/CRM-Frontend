@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useCotizaciones }    from '../hooks/useCotizaciones.js'
 import { CotizacionesTable }  from '../components/CotizacionesTable.jsx'
 import { Pagination }         from '../components/Pagination.jsx'
+import AppLoader from '../components/AppLoader.jsx'
 
 const PAGE_SIZE = 25
 
@@ -145,6 +146,7 @@ function CotizacionesFiltros({ crm }) {
 }
 
 export default function CotizacionesView() {
+  
   const crm = useCotizaciones()
   const [now, setNow] = useState('')
 
@@ -159,6 +161,8 @@ export default function CotizacionesView() {
   }, [])
 
   return (
+    <>
+    <AppLoader loading={crm.loading} />
     <div className="cotizaciones-scope">
       <header className="topbar">
         <div className="topbar-brand">
@@ -214,5 +218,6 @@ export default function CotizacionesView() {
         <div className="toast">⚠ {crm.error}</div>
       )}
     </div>
+    </>
   )
 }
