@@ -15,8 +15,8 @@ export default function App() {
       <main className="app-main">
         {page === "landing" && <LandingView setPage={setPage} />}
         {page === "gestiones" && <GestionesView />}
-        {page === "pedidos" && <ComingSoon title="Pedidos" />}
         {page === "cotizaciones" && <CotizacionesView />}
+         {page === "pedidos" && <ComingSoon title="Pedidos" />}
       </main>
     </div>
   )

@@ -12,7 +12,6 @@ function fmtMoneda(val) {
   }).format(val)
 }
 
-// ── Selector de columnas ──────────────────────────────────────────
 function ColSelector({ COLS_DISPONIBLES, colsVisibles, toggleCol }) {
   const [open, setOpen] = useState(false)
 
@@ -54,7 +53,6 @@ function ColSelector({ COLS_DISPONIBLES, colsVisibles, toggleCol }) {
   )
 }
 
-// ── Stats de cotizaciones ─────────────────────────────────────────
 function CotizacionesStats({ stats }) {
   return (
     <div className="stats-bar">
@@ -76,10 +74,9 @@ function CotizacionesStats({ stats }) {
   )
 }
 
-// ── Filtros ───────────────────────────────────────────────────────
 function CotizacionesFiltros({ crm }) {
   return (
-    <div className="filter-bar">
+    <div className="filter-bar cot-filter-bar">
       {/* Búsqueda libre */}
       <div className="filter-search">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -157,12 +154,12 @@ export default function CotizacionesView() {
       hour: '2-digit', minute: '2-digit'
     }))
     tick()
-    const id = setInterval(tick, 30_000)
+    const id = setInterval(tick, 30000)
     return () => clearInterval(id)
   }, [])
 
   return (
-    <>
+    <div className="cotizaciones-scope">
       <header className="topbar">
         <div className="topbar-brand">
           <div className="dot" />
@@ -173,7 +170,7 @@ export default function CotizacionesView() {
       <div className="main">
         <CotizacionesStats stats={crm.stats} />
         <CotizacionesFiltros crm={crm} />
-       </div>
+      </div>
 
       <div className="table-section">
         <div className="table-header">
@@ -182,11 +179,11 @@ export default function CotizacionesView() {
             <span className="count-badge">{crm.filtered.length}</span>
           </span>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px' }}>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-3)' }}>
               Página {crm.page} de {crm.totalPages}
             </span>
-            {/* Selector de columnas */}
+
             <ColSelector
               COLS_DISPONIBLES={crm.COLS_DISPONIBLES}
               colsVisibles={crm.colsVisibles}
@@ -202,7 +199,6 @@ export default function CotizacionesView() {
           sortDir={crm.sortDir}
           toggleSort={crm.toggleSort}
           colsVisibles={crm.colsVisibles}
-          COLS_DISPONIBLES={crm.COLS_DISPONIBLES}
         />
 
         <Pagination
@@ -217,6 +213,6 @@ export default function CotizacionesView() {
       {crm.error && (
         <div className="toast">⚠ {crm.error}</div>
       )}
-    </>
+    </div>
   )
 }

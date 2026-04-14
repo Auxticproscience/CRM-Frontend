@@ -1,8 +1,8 @@
 export function Navbar({ page, setPage }) {
   const tabs = [
     { id: "gestiones", label: "Gestiones" },
-    { id: "pedidos", label: "Pedidos" },
     { id: "cotizaciones", label: "Cotizaciones" },
+    { id: "pedidos", label: "Pedidos" },
   ]
 
   return (
