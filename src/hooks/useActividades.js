@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { fetchActividades } from '../utils/api'
+import { fetchActividades } from '../services/api'
 
 // Primer y último día del mes actual como string YYYY-MM-DD
 function mesActual() {

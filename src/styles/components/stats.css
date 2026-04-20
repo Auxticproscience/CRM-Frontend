@@ -1,6 +1,6 @@
-/* ── Stats bar ── */
 .stats-bar {
   display: grid;
+  align-items: end;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px;
   margin-bottom: 1.25rem;
@@ -28,3 +28,23 @@
 .stat-value.accent { color: var(--accent); }
 .stat-value.green  { color: var(--green); }
 .stat-value.amber  { color: var(--amber); }
+
+.fiel-progres1, .fiel-progres2, .fiel-progres3{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.progress-barGesti{
+  height: 10px;
+  border: solid 1px;
+  background-color: rgba(119, 118, 118, 0.315);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress-fillGesti{
+  border-radius: 20px;
+  height: 100%;
+  background-color :rgb(19, 199, 28);
+}

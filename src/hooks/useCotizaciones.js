@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { fetchCotizaciones } from '../utils/api'
+import { fetchCotizaciones } from '../services/api'
 
 function mesActual() {
   const now  = new Date()
@@ -23,20 +23,16 @@ export function useCotizaciones() {
   const [filterCondicion, setFilterCondicion]       = useState('')
   const [filterListaPrecio, setFilterListaPrecio]   = useState('')
 
-  // Fechas — mes actual por defecto
   const defaults = mesActual()
   const [dateFrom, setDateFrom] = useState(defaults.from)
   const [dateTo,   setDateTo]   = useState(defaults.to)
 
-  // Sort
   const [sortKey, setSortKey] = useState('fechaCreacion')
   const [sortDir, setSortDir] = useState('desc')
 
-  // Paginación
   const [page, setPage] = useState(1)
   const PAGE_SIZE       = 25
 
-  // Columnas visibles — el usuario las activa/desactiva
   const COLS_DISPONIBLES = [
     { key: 'fechaCreacion',      label: 'Fecha creación',   default: true  },
     { key: 'numeroCotizacion',   label: 'Cotización',       default: true  },
@@ -78,7 +74,6 @@ export function useCotizaciones() {
       .catch(e => { setError(e.message); setLoading(false) })
   }, [])
 
-  // Opciones para los selects
   const options = useMemo(() => {
     const set = k => [...new Set(data.map(r => r[k]).filter(Boolean))].sort()
     return {
@@ -165,7 +160,6 @@ export function useCotizaciones() {
     dateTo            && { key: 'to',       label: `Hasta ${dateTo}`,     clear: () => setDateTo('') },
   ].filter(Boolean)
 
-  // Stats sobre datos filtrados
   const stats = useMemo(() => {
     const total      = filtered.length
     const valorTotal = filtered.reduce((sum, r) => sum + (parseFloat(r.valorTotal) || 0), 0)
