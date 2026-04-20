@@ -322,5 +322,6 @@
   }
   .cotizaciones-scope .stat-divider {
     margin: 0 1rem;
+    background-color: white; 
   }
 }
