@@ -22,7 +22,6 @@ export function useActividades() {
   const [filterPropietario, setFilterPropietario] = useState('')
   const [filterCliente, setFilterCliente]         = useState('')
 
-  // Fechas — inician en el mes actual
   const defaults = mesActual()
   const [dateFrom, setDateFrom] = useState(defaults.from)
   const [dateTo,   setDateTo]   = useState(defaults.to)

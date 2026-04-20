@@ -161,11 +161,18 @@ export function useCotizaciones() {
   ].filter(Boolean)
 
   const stats = useMemo(() => {
-    const total      = filtered.length
-    const valorTotal = filtered.reduce((sum, r) => sum + (parseFloat(r.valorTotal) || 0), 0)
-    const conPedido  = filtered.filter(r => r.pedidoErp).length
-    return { total, valorTotal, conPedido }
-  }, [filtered])
+  const conPedido     = filtered.filter(r => r.pedidoErp)
+  const sinPedido     = filtered.filter(r => !r.pedidoErp)
+
+  return {
+    total:           filtered.length,
+    valorTotal:      filtered.reduce((s, r) => s + (r.valorTotal || 0), 0),
+    conPedido:       conPedido.length,
+    valorConPedido:  conPedido.reduce((s, r) => s + (r.valorTotal || 0), 0),
+    sinPedido:       sinPedido.length,
+    valorSinPedido:  sinPedido.reduce((s, r) => s + (r.valorTotal || 0), 0),
+  }
+}, [filtered])
 
   return {
     loading, error, data, options,

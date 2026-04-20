@@ -71,6 +71,11 @@ function CotizacionesStats({ stats }) {
         <span className="stat-label">Con pedido ERP</span>
         <span className="stat-value">{stats.conPedido}</span>
       </div>
+      <div className="stat-divider" />
+      <div className="stat-item">                                  
+        <span className="stat-label">Valor con pedido ERP</span>
+        <span className="stat-value">{fmtMoneda(stats.valorConPedido)}</span>
+      </div>
     </div>
   )
 }
@@ -78,7 +83,6 @@ function CotizacionesStats({ stats }) {
 function CotizacionesFiltros({ crm }) {
   return (
     <div className="filter-bar cot-filter-bar">
-      {/* Búsqueda libre */}
       <div className="filter-search">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
