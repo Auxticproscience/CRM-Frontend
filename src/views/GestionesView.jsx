@@ -33,8 +33,11 @@ export default function GestionesView() {
       </header>
 
       <div className="main">
-        {/* TODO lo demás igual */}
-        <StatsBar crm={crm} />
+        <StatsBar
+          crm={crm}
+          filterPropietario={crm.filterPropietario}
+          totalAsesores={crm.options.propietarios.length}
+        />
       </div>
 
         <FilterBar

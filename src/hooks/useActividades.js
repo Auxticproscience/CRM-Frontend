@@ -117,12 +117,12 @@ export function useActividades() {
     dateTo            && { key: 'to',      label: `Hasta ${dateTo}`,   clear: () => setDateTo('') },
   ].filter(Boolean)
 
-  // Stats — calculadas sobre los registros YA filtrados por fecha (y los demás filtros activos)
+  
   const stats = useMemo(() => {
     const gestion  = filtered.filter(r => r.tipo === 'Gestión').length
     const visitas  = filtered.filter(r => r.tipo === 'Visita').length
     const llamadas = filtered.filter(r => r.tipo === 'Llamadas').length
-    const totalMes = gestion + visitas + llamadas
+    const totalMes = gestion + visitas + llamadas;
     return { totalMes, gestion, visitas, llamadas }
   }, [filtered])
 

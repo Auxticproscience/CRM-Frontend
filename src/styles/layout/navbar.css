@@ -6,10 +6,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   padding: 0 1.5rem;
   height: 60px;
-
   background: var(--radius);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
@@ -59,4 +57,11 @@
   background: var(--accent);
   color: white;
   border-color: var(--bg-3);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    padding: 20px 0px 80px 0px;
+  }
 }
