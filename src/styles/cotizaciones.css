@@ -153,7 +153,6 @@
   border-collapse: collapse;
 }
 
-/* Headers — color correcto para fondo blanco */
 .cotizaciones-scope thead th {
   padding: 0.6rem 1rem;
   text-align: left;
@@ -161,7 +160,7 @@
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--text-3);          /* #005eff — visible sobre blanco */
+  color: var(--text-3);
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
   background: var(--bg-2);
@@ -311,6 +310,10 @@
 }
 
 @media (max-width: 600px) {
+  .cotizaciones-scope .stats-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
   .cotizaciones-scope .cot-filter-bar {
     grid-template-columns: 1fr;
   }
