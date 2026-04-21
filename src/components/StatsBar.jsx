@@ -1,8 +1,8 @@
 export function StatsBar({ crm, filterPropietario, totalAsesores }) {
 
-  const META_DIARIA_GESTION  = 0.83;
-  const META_DIARIA_VISITAS  = 3.3;
-  const META_DIARIA_LLAMADAS = 4.16;
+  const META_DIARIA_GESTION  = (25 / 30);
+  const META_DIARIA_VISITAS  = (100 / 30);
+  const META_DIARIA_LLAMADAS = (125 / 30);
 
   const calcDias = () => {
     const hoy = new Date();
