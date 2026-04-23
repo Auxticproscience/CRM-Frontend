@@ -24,9 +24,9 @@ export function StatsBar({ crm, filterPropietario, totalAsesores }) {
   const dias = calcDias();
   const numAsesores = filterPropietario ? 1 : (totalAsesores || 1);
 
-  const metaGestion  = META_DIARIA_GESTION  * dias * numAsesores;
-  const metaVistas   = META_DIARIA_VISITAS  * dias * numAsesores;
-  const metaLlamadas = META_DIARIA_LLAMADAS * dias * numAsesores;
+  const metaGestion  = Math.round(META_DIARIA_GESTION  * dias * numAsesores);
+  const metaVistas   = Math.round(META_DIARIA_VISITAS  * dias * numAsesores);
+  const metaLlamadas = Math.round(META_DIARIA_LLAMADAS * dias * numAsesores);
 
   const stats = crm.stats;
 
