@@ -26,7 +26,6 @@ export function FilterBar({
       </div>
 
       <div className="filter-grid">
-        {/* Búsqueda libre */}
         <div className="field">
           <span className="field-lbl">Buscar</span>
           <input
@@ -37,7 +36,6 @@ export function FilterBar({
           />
         </div>
 
-        {/* Estado */}
         <div className="field">
           <span className="field-lbl">Estado</span>
           <select value={filterEstado} onChange={handle(setFilterEstado)}>
@@ -46,7 +44,6 @@ export function FilterBar({
           </select>
         </div>
 
-        {/* Tipo */}
         <div className="field">
           <span className="field-lbl">Tipo</span>
           <select value={filterTipo} onChange={handle(setFilterTipo)}>
@@ -55,7 +52,6 @@ export function FilterBar({
           </select>
         </div>
 
-        {/* Propietario */}
         <div className="field">
           <span className="field-lbl">Asesor</span>
           <select value={filterPropietario} onChange={handle(setFilterPropietario)}>
@@ -65,7 +61,6 @@ export function FilterBar({
         </div>
       </div>
 
-      {/* Segunda fila: cliente + fechas */}
       <div style={{ marginTop: '1rem' }}>
         <div className="field">
           <span className="field-lbl">Cliente</span>
@@ -84,7 +79,6 @@ export function FilterBar({
         </div>
       </div>
 
-      {/* Chips activos */}
       {activeFilters.length > 0 && (
         <div className="active-filters">
           {activeFilters.map(f => (

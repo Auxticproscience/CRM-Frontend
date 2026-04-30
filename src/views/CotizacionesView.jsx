@@ -63,8 +63,8 @@ function CotizacionesStats({ stats }) {
       </div>
       <div className="stat-divider" />
       <div className="stat-item">
-        <span className="stat-label">Valor total</span>
-        <span className="stat-value">{fmtMoneda(stats.valorTotal)}</span>
+        <span className="stat-label">Forecast</span>
+        <span className="stat-value">{fmtMoneda(stats.valorSubtotal)}</span>
       </div>
       <div className="stat-divider" />
       <div className="stat-item">
@@ -73,7 +73,7 @@ function CotizacionesStats({ stats }) {
       </div>
       <div className="stat-divider" />
       <div className="stat-item">                                  
-        <span className="stat-label">Valor con pedido ERP</span>
+        <span className="stat-label">Payland</span>
         <span className="stat-value">{fmtMoneda(stats.valorConPedido)}</span>
       </div>
     </div>

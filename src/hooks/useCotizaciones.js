@@ -14,7 +14,6 @@ export function useCotizaciones() {
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
 
-  // Filtros
   const [search, setSearch]                         = useState('')
   const [filterPropietario, setFilterPropietario]   = useState('')
   const [filterCliente, setFilterCliente]           = useState('')
@@ -166,11 +165,11 @@ export function useCotizaciones() {
 
   return {
     total:           filtered.length,
-    valorTotal:      filtered.reduce((s, r) => s + (r.valorTotal || 0), 0),
+    valorSubtotal:   filtered.reduce((s, r) => s + (r.valorSubtotal || 0), 0),
     conPedido:       conPedido.length,
-    valorConPedido:  conPedido.reduce((s, r) => s + (r.valorTotal || 0), 0),
+    valorConPedido:  conPedido.reduce((s, r) => s + (r.valorSubtotal || 0), 0),
     sinPedido:       sinPedido.length,
-    valorSinPedido:  sinPedido.reduce((s, r) => s + (r.valorTotal || 0), 0),
+    valorSinPedido:  sinPedido.reduce((s, r) => s + (r.valorSubtotal || 0), 0),
   }
 }, [filtered])
 

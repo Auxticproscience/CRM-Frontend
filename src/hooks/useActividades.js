@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { fetchActividades } from '../services/api'
 
-// Primer y último día del mes actual como string YYYY-MM-DD
 function mesActual() {
   const now   = new Date()
   const y     = now.getFullYear()
@@ -15,7 +14,6 @@ export function useActividades() {
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
 
-  // Filtros
   const [search, setSearch]                       = useState('')
   const [filterEstado, setFilterEstado]           = useState('')
   const [filterTipo, setFilterTipo]               = useState('')
@@ -26,11 +24,9 @@ export function useActividades() {
   const [dateFrom, setDateFrom] = useState(defaults.from)
   const [dateTo,   setDateTo]   = useState(defaults.to)
 
-  // Sort
   const [sortKey, setSortKey] = useState('fechaCreacion')
   const [sortDir, setSortDir] = useState('desc')
 
-  // Paginación
   const [page, setPage] = useState(1)
   const PAGE_SIZE       = 25
 
@@ -42,7 +38,6 @@ export function useActividades() {
       .catch(e => { setError(e.message); setLoading(false) })
   }, [])
 
-  // Opciones de selects derivadas del total de datos
   const options = useMemo(() => {
     const set = k => [...new Set(data.map(r => r[k]).filter(Boolean))].sort()
     return {

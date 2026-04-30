@@ -55,9 +55,9 @@ const TODAS_LAS_COLS = [
     sortable: true,
   },
   {
-    key: 'valorTotal',
-    label: 'Valor total',
-    render: r => <span className="mono money">{fmtMoneda(r.valorTotal)}</span>,
+    key: 'valorSubtotal',
+    label: 'Forecast',
+    render: r => <span className="mono money">{fmtMoneda(r.valorSubtotal)}</span>,
     sortable: true,
     align: 'right',
   },

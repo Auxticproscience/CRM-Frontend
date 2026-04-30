@@ -2,7 +2,6 @@ export function Pagination({ page, totalPages, total, pageSize, onPage }) {
   const from = Math.min((page - 1) * pageSize + 1, total)
   const to   = Math.min(page * pageSize, total)
 
-  // Mostrar máx 5 páginas alrededor de la actual
   const pages = []
   const delta = 2
   for (let i = Math.max(1, page - delta); i <= Math.min(totalPages, page + delta); i++) {
