@@ -45,7 +45,7 @@ export function StatsBar({ crm, filterPropietario }) {
   const gerentes = crm.options.asesoresGerentes;
 
   let totalAsesores = 0;
-let totalGerentes = 0;
+  let totalGerentes = 0;
 
 if (crm.onlyGerentes) {
   totalGerentes = gerentes.length;
@@ -61,15 +61,18 @@ if (crm.onlyGerentes) {
 }
 
   const metaGestion = Math.round(
-  ((totalAsesores * META_ASESOR.gestion))
+  (totalAsesores * META_ASESOR.gestion) +
+  (totalGerentes * META_GERENTE.gestion)
 );
 
 const metaVisitas = Math.round(
-  ((totalAsesores * META_ASESOR.visitas))
+  (totalAsesores * META_ASESOR.visitas) +
+  (totalGerentes * META_GERENTE.visitas)
 );
 
 const metaLlamadas = Math.round(
-  ((totalAsesores * META_ASESOR.llamadas))
+  (totalAsesores * META_ASESOR.llamadas) +
+  (totalGerentes * META_GERENTE.llamadas)
 );
 
   const stats = crm.stats;
