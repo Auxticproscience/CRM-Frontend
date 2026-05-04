@@ -31,12 +31,19 @@ export function useActividades() {
   const PAGE_SIZE       = 25
 
   useEffect(() => {
-    setLoading(true)
-    setError(null)
-    fetchActividades()
-      .then(d => { setData(d); setLoading(false) })
-      .catch(e => { setError(e.message); setLoading(false) })
-  }, [])
+      setLoading(true)
+      setError(null)
+
+      fetchActividades()
+        .then(d => {
+          setData(d)
+          setLoading(false)
+        })
+        .catch(e => {
+          setError(e.message)
+          setLoading(false)
+        })
+    }, [])
 
   const options = useMemo(() => {
     const set = k => [...new Set(data.map(r => r[k]).filter(Boolean))].sort()
