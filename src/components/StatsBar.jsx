@@ -60,19 +60,17 @@ if (crm.onlyGerentes) {
   totalGerentes = gerentes.length;
 }
 
-  const safeNum = Math.max(1, numAsesores);
+  const metaGestion = Math.round(
+  ((totalAsesores * META_ASESOR.gestion))
+);
 
-  const metaGestion =
-  (totalAsesores * META_ASESOR.gestion) +
-  (totalGerentes * META_GERENTE.gestion);
+const metaVisitas = Math.round(
+  ((totalAsesores * META_ASESOR.visitas))
+);
 
-const metaVisitas =
-  (totalAsesores * META_ASESOR.visitas) +
-  (totalGerentes * META_GERENTE.visitas);
-
-const metaLlamadas =
-  (totalAsesores * META_ASESOR.llamadas) +
-  (totalGerentes * META_GERENTE.llamadas);
+const metaLlamadas = Math.round(
+  ((totalAsesores * META_ASESOR.llamadas))
+);
 
   const stats = crm.stats;
 
