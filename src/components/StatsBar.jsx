@@ -1,8 +1,16 @@
 export function StatsBar({ crm, filterPropietario }) {
 
-  const META_MENSUAL_GESTION  = (25 / 31);
-  const META_MENSUAL_VISITAS  = (100 / 31);
-  const META_MENSUAL_LLAMADAS = (125 / 31);
+  const META_ASESOR = {
+  gestion: 25,
+  visitas: 100,
+  llamadas: 125
+  };
+
+  const META_GERENTE = {
+    gestion: 25,
+    visitas: 50,
+    llamadas: 75
+  };
 
   const ASESORES_GERENTES = [
     'JULIO CESAR DIAZ COLORADO',
@@ -36,21 +44,35 @@ export function StatsBar({ crm, filterPropietario }) {
   const asesores = crm.options.asesores;
   const gerentes = crm.options.asesoresGerentes;
 
-  let numAsesores = 0;
+  let totalAsesores = 0;
+let totalGerentes = 0;
 
-  if (crm.onlyGerentes) {
-    numAsesores = 0;
-  } else if (filterPropietario) {
-    numAsesores = ASESORES_GERENTES.includes(filterPropietario) ? 0 : 1;
+if (crm.onlyGerentes) {
+  totalGerentes = gerentes.length;
+} else if (filterPropietario) {
+  if (ASESORES_GERENTES.includes(filterPropietario)) {
+    totalGerentes = 1;
   } else {
-    numAsesores = asesores.length;
+    totalAsesores = 1;
   }
+} else {
+  totalAsesores = asesores.length;
+  totalGerentes = gerentes.length;
+}
 
   const safeNum = Math.max(1, numAsesores);
 
-  const metaGestion  = numAsesores === 0 ? 0 : Math.round(META_MENSUAL_GESTION  * dias * safeNum);
-  const metaVisitas  = numAsesores === 0 ? 0 : Math.round(META_MENSUAL_VISITAS  * dias * safeNum);
-  const metaLlamadas = numAsesores === 0 ? 0 : Math.round(META_MENSUAL_LLAMADAS * dias * safeNum);
+  const metaGestion =
+  (totalAsesores * META_ASESOR.gestion) +
+  (totalGerentes * META_GERENTE.gestion);
+
+const metaVisitas =
+  (totalAsesores * META_ASESOR.visitas) +
+  (totalGerentes * META_GERENTE.visitas);
+
+const metaLlamadas =
+  (totalAsesores * META_ASESOR.llamadas) +
+  (totalGerentes * META_GERENTE.llamadas);
 
   const stats = crm.stats;
 
@@ -61,9 +83,6 @@ export function StatsBar({ crm, filterPropietario }) {
   const pVisitas  = calcPct(stats.visitas,  metaVisitas);
   const pLlamadas = calcPct(stats.llamadas, metaLlamadas);
 
-  // ─────────────────────────────
-  // COLOR SEMÁFORO (como antes)
-  // ─────────────────────────────
   const getColor = (pct) => {
     if (pct >= 100) return 'rgb(19,199,28)';   // verde
     if (pct >= 60)  return 'rgb(255,180,0)';   // amarillo
