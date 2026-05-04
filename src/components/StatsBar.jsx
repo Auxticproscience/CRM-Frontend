@@ -1,8 +1,13 @@
-export function StatsBar({ crm, filterPropietario, totalAsesores }) {
+export function StatsBar({ crm, filterPropietario }) {
 
   const META_MENSUAL_GESTION  = (25 / 31);
   const META_MENSUAL_VISITAS  = (100 / 31);
   const META_MENSUAL_LLAMADAS = (125 / 31);
+
+  const ASESORES_GERENTES = [
+    'JULIO CESAR DIAZ COLORADO',
+    'MICHAEL JHESIT OSORIO RIOS'
+  ];
 
   const calcDias = () => {
     const hoy = new Date();
@@ -11,46 +16,77 @@ export function StatsBar({ crm, filterPropietario, totalAsesores }) {
     if (crm.dateFrom && crm.dateTo) {
       const from = new Date(crm.dateFrom);
       const to   = new Date(crm.dateTo);
-      return Math.max(1, Math.round((to - from) / 86_400_000) + 1);
+      return Math.max(1, Math.round((to - from) / 86400000) + 1);
     }
+
     if (crm.dateFrom) {
       const from = new Date(crm.dateFrom);
-      return Math.max(1, Math.round((hoy - from) / 86_400_000) + 1);
+      return Math.max(1, Math.round((hoy - from) / 86400000) + 1);
     }
 
     return hoy.getDate();
   };
 
   const dias = calcDias();
-  const numAsesores = filterPropietario ? 1 : (totalAsesores || 1);
 
-  const metaGestion  = Math.round(META_MENSUAL_GESTION  * dias * numAsesores);
-  const metaVistas   = Math.round(META_MENSUAL_VISITAS  * dias * numAsesores);
-  const metaLlamadas = Math.round(META_MENSUAL_LLAMADAS * dias * numAsesores);
+  const asesoresUnicos = [
+  ...new Set(crm.filtered.map(r => r.propietario).filter(Boolean))
+  ];
+
+  const asesores = crm.options.asesores;
+  const gerentes = crm.options.asesoresGerentes;
+
+  let numAsesores = 0;
+
+  if (crm.onlyGerentes) {
+    numAsesores = 0;
+  } else if (filterPropietario) {
+    numAsesores = ASESORES_GERENTES.includes(filterPropietario) ? 0 : 1;
+  } else {
+    numAsesores = asesores.length;
+  }
+
+  const safeNum = Math.max(1, numAsesores);
+
+  const metaGestion  = numAsesores === 0 ? 0 : Math.round(META_MENSUAL_GESTION  * dias * safeNum);
+  const metaVisitas  = numAsesores === 0 ? 0 : Math.round(META_MENSUAL_VISITAS  * dias * safeNum);
+  const metaLlamadas = numAsesores === 0 ? 0 : Math.round(META_MENSUAL_LLAMADAS * dias * safeNum);
 
   const stats = crm.stats;
 
-  const pGestion  = Math.min((stats.gestion  / metaGestion)  * 100, 100);
-  const pVistas   = Math.min((stats.visitas  / metaVistas)   * 100, 100);
-  const pLlamadas = Math.min((stats.llamadas / metaLlamadas) * 100, 100);
+  const calcPct = (actual, meta) =>
+    meta === 0 ? 0 : Math.min((actual / meta) * 100, 100);
 
-  const labelAsesor = filterPropietario
-    ? filterPropietario
-    : `${numAsesores} asesores`;
+  const pGestion  = calcPct(stats.gestion,  metaGestion);
+  const pVisitas  = calcPct(stats.visitas,  metaVisitas);
+  const pLlamadas = calcPct(stats.llamadas, metaLlamadas);
+
+  // ─────────────────────────────
+  // COLOR SEMÁFORO (como antes)
+  // ─────────────────────────────
+  const getColor = (pct) => {
+    if (pct >= 100) return 'rgb(19,199,28)';   // verde
+    if (pct >= 60)  return 'rgb(255,180,0)';   // amarillo
+    return 'rgb(220,50,50)';                   // rojo
+  };
+
+  const labelAsesor = crm.onlyGerentes
+    ? `Gerentes (${gerentes.length})`
+    : filterPropietario
+      ? filterPropietario
+      : `${asesores.length} asesores${gerentes.length ? ` + ${gerentes.length} gerentes` : ''}`;
 
   const ProgressGroup = ({ pct, actual, meta }) => (
     <div className="progress-group">
-      <p>{pct.toFixed(1)}% · {actual.toLocaleString('es-CO')} / {meta.toLocaleString('es-CO')}</p>
+      <p>
+        {pct.toFixed(1)}% · {actual.toLocaleString('es-CO')} / {meta.toLocaleString('es-CO')}
+      </p>
       <div className="progress-barGesti">
         <div
           className="progress-fillGesti"
           style={{
             width: `${pct}%`,
-            backgroundColor: pct >= 100
-              ? 'rgb(19,199,28)'
-              : pct >= 60
-                ? 'rgb(255,180,0)'
-                : 'rgb(220,50,50)'
+            backgroundColor: getColor(pct)
           }}
         />
       </div>
@@ -60,22 +96,25 @@ export function StatsBar({ crm, filterPropietario, totalAsesores }) {
   return (
     <div className="stats-bar">
 
+      {/* TOTAL */}
       <div className="stat-card">
         <span className="stat-label">
           Total · {crm.dateFrom && crm.dateTo
             ? `${crm.dateFrom} → ${crm.dateTo}`
             : crm.dateFrom ? `desde ${crm.dateFrom}`
-              : crm.dateTo  ? `hasta ${crm.dateTo}`
-                : 'período'}
+              : crm.dateTo ? `hasta ${crm.dateTo}`
+              : 'período'}
         </span>
         <span className="stat-value accent">
           {crm.loading ? '…' : stats.totalMes.toLocaleString('es-CO')}
         </span>
       </div>
 
-      {/* ── Gestión ── */}
+      {/* GESTIÓN */}
       <div className="fiel-progres1">
-        {crm.loading ? '…' : <ProgressGroup pct={pGestion} actual={stats.gestion} meta={metaGestion} />}
+        {crm.loading ? '…' : (
+          <ProgressGroup pct={pGestion} actual={stats.gestion} meta={metaGestion} />
+        )}
         <div className="stat-card">
           <span className="stat-label">Gestión · {dias}d · {labelAsesor}</span>
           <span className="stat-value green">
@@ -84,9 +123,11 @@ export function StatsBar({ crm, filterPropietario, totalAsesores }) {
         </div>
       </div>
 
-      {/* ── Visitas ── */}
+      {/* VISITAS */}
       <div className="fiel-progres2">
-        {crm.loading ? '…' : <ProgressGroup pct={pVistas} actual={stats.visitas} meta={metaVistas} />}
+        {crm.loading ? '…' : (
+          <ProgressGroup pct={pVisitas} actual={stats.visitas} meta={metaVisitas} />
+        )}
         <div className="stat-card">
           <span className="stat-label">Visitas · {dias}d · {labelAsesor}</span>
           <span className="stat-value amber">
@@ -95,9 +136,11 @@ export function StatsBar({ crm, filterPropietario, totalAsesores }) {
         </div>
       </div>
 
-      {/* ── Llamadas ── */}
+      {/* LLAMADAS */}
       <div className="fiel-progres3">
-        {crm.loading ? '…' : <ProgressGroup pct={pLlamadas} actual={stats.llamadas} meta={metaLlamadas} />}
+        {crm.loading ? '…' : (
+          <ProgressGroup pct={pLlamadas} actual={stats.llamadas} meta={metaLlamadas} />
+        )}
         <div className="stat-card">
           <span className="stat-label">Llamadas · {dias}d · {labelAsesor}</span>
           <span className="stat-value">
@@ -106,6 +149,7 @@ export function StatsBar({ crm, filterPropietario, totalAsesores }) {
         </div>
       </div>
 
+      {/* FILTRADOS */}
       <div className="stat-card">
         <span className="stat-label">Filtrados</span>
         <span className="stat-value">

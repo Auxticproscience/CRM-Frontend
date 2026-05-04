@@ -9,6 +9,7 @@ export function FilterBar({
   dateTo, setDateTo,
   activeFilters, clearFilters,
   onChangePage,
+  onlyGerentes, setOnlyGerentes,
 }) {
   function handle(setter) {
     return e => { setter(e.target.value); onChangePage(1) }
@@ -53,10 +54,26 @@ export function FilterBar({
         </div>
 
         <div className="field">
+          <span className="field-lbl">Gerentes</span>
+          <select
+            value={onlyGerentes ? 'SI' : ''}
+            onChange={e => {
+              setOnlyGerentes(e.target.value === 'SI')
+              onChangePage(1)
+            }}
+          >
+            <option value="">Todos</option>
+            <option value="SI">Solo gerentes</option>
+          </select>
+        </div>
+
+        <div className="field">
           <span className="field-lbl">Asesor</span>
           <select value={filterPropietario} onChange={handle(setFilterPropietario)}>
-            <option value="">Todos</option>
-            {options.propietarios.map(p => <option key={p} value={p}>{p}</option>)}
+              <option value="">Todos</option>
+              {options.asesores.map(p => (
+                <option key={p} value={p}>{p}</option>
+              ))}
           </select>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { fetchActividades } from '../services/api'
 
+
 function mesActual() {
   const now   = new Date()
   const y     = now.getFullYear()
@@ -13,7 +14,9 @@ export function useActividades() {
   const [data, setData]       = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
+  
 
+  const [onlyGerentes, setOnlyGerentes] = useState(false);
   const [search, setSearch]                       = useState('')
   const [filterEstado, setFilterEstado]           = useState('')
   const [filterTipo, setFilterTipo]               = useState('')
@@ -45,44 +48,74 @@ export function useActividades() {
         })
     }, [])
 
+  const ASESORES_GERENTES = ['JULIO CESAR DIAZ COLORADO','MICHAEL JHESIT OSORIO RIOS']
+  
   const options = useMemo(() => {
-    const set = k => [...new Set(data.map(r => r[k]).filter(Boolean))].sort()
-    return {
-      estados:      set('estado'),
-      tipos:        set('tipo'),
-      propietarios: set('propietario'),
-      clientes:     set('cliente'),
-    }
+  const propietarios = [...new Set(data.map(r => r.propietario).filter(Boolean))].sort()
+
+  const asesoresGerentes = propietarios.filter(p => ASESORES_GERENTES.includes(p))
+  const asesores = propietarios.filter(p => !ASESORES_GERENTES.includes(p))
+
+  const set = k => [...new Set(data.map(r => r[k]).filter(Boolean))].sort()
+
+  return {
+    estados: set('estado'),
+    tipos: set('tipo'),
+    clientes: set('cliente'),
+    propietarios,
+    asesores,
+    asesoresGerentes
+  }
   }, [data])
+ 
+const filtered = useMemo(() => {
+  let rows = data
 
-  const filtered = useMemo(() => {
-    let rows = data
+  if (search.trim()) {
+    const q = search.toLowerCase()
+    rows = rows.filter(r =>
+      (r.nombre      || '').toLowerCase().includes(q) ||
+      (r.descripcion || '').toLowerCase().includes(q) ||
+      (r.cliente     || '').toLowerCase().includes(q) ||
+      (r.lugar       || '').toLowerCase().includes(q)
+    )
+  }
 
-    if (search.trim()) {
-      const q = search.toLowerCase()
-      rows = rows.filter(r =>
-        (r.nombre      || '').toLowerCase().includes(q) ||
-        (r.descripcion || '').toLowerCase().includes(q) ||
-        (r.cliente     || '').toLowerCase().includes(q) ||
-        (r.lugar       || '').toLowerCase().includes(q)
-      )
-    }
-    if (filterEstado)      rows = rows.filter(r => r.estado      === filterEstado)
-    if (filterTipo)        rows = rows.filter(r => r.tipo        === filterTipo)
-    if (filterPropietario) rows = rows.filter(r => r.propietario === filterPropietario)
-    if (filterCliente)     rows = rows.filter(r => r.cliente     === filterCliente)
-    if (dateFrom)          rows = rows.filter(r => r.fechaCreacion >= dateFrom)
-    if (dateTo)            rows = rows.filter(r => r.fechaCreacion <= dateTo + 'T23:59:59')
+  if (filterEstado) rows = rows.filter(r => r.estado === filterEstado)
+  if (filterTipo)   rows = rows.filter(r => r.tipo === filterTipo)
 
-    rows = [...rows].sort((a, b) => {
-      const va = a[sortKey] ?? ''
-      const vb = b[sortKey] ?? ''
-      const cmp = va < vb ? -1 : va > vb ? 1 : 0
-      return sortDir === 'asc' ? cmp : -cmp
-    })
+  if (onlyGerentes) {
+    rows = rows.filter(r => ASESORES_GERENTES.includes(r.propietario))
+  }
 
-    return rows
-  }, [data, search, filterEstado, filterTipo, filterPropietario, filterCliente, dateFrom, dateTo, sortKey, sortDir])
+  if (filterPropietario) rows = rows.filter(r => r.propietario === filterPropietario)
+  if (filterCliente)     rows = rows.filter(r => r.cliente === filterCliente)
+
+  if (dateFrom) rows = rows.filter(r => r.fechaCreacion >= dateFrom)
+  if (dateTo)   rows = rows.filter(r => r.fechaCreacion <= dateTo + 'T23:59:59')
+
+  rows = [...rows].sort((a, b) => {
+    const va = a[sortKey] ?? ''
+    const vb = b[sortKey] ?? ''
+    const cmp = va < vb ? -1 : va > vb ? 1 : 0
+    return sortDir === 'asc' ? cmp : -cmp
+  })
+
+  return rows
+}, [
+  data,
+  search,
+  filterEstado,
+  filterTipo,
+  filterPropietario,
+  filterCliente,
+  dateFrom,
+  dateTo,
+  sortKey,
+  sortDir,
+  onlyGerentes
+])
+  
 
   const paginated = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE
@@ -105,6 +138,7 @@ export function useActividades() {
   setFilterCliente('')
   setDateFrom('')
   setDateTo('')
+  setOnlyGerentes(false)
   setPage(1)
 }
 
@@ -139,5 +173,6 @@ export function useActividades() {
     dateFrom, setDateFrom,
     dateTo, setDateTo,
     activeFilters, clearFilters,
+    onlyGerentes, setOnlyGerentes
   }
 }
