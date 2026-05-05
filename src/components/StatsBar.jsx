@@ -64,19 +64,33 @@ export function StatsBar({ crm, filterPropietario }) {
   const asesoresUnicos = [
   ...new Set(crm.filtered.map(r => r.propietario).filter(Boolean))
     ];
-  const propietariosFiltrados = [
-    ...new Set(crm.filtered.map(r => r.propietario).filter(Boolean))
-  ];
 
-  const gerentesNormalizados = ASESORES_GERENTES.map(normalizarNombre);
+ let asesores = [];
+ let gerentes = [];
 
-  const gerentes = propietariosFiltrados.filter(p =>
-    gerentesNormalizados.includes(normalizarNombre(p))
-  );
+if (crm.onlyGerentes) {
+  gerentes = ASESORES_GERENTES;
+}
 
-  const asesores = propietariosFiltrados.filter(p =>
-    !gerentesNormalizados.includes(normalizarNombre(p))
-  );
+else if (filterPropietario) {
+  if (ASESORES_GERENTES.includes(filterPropietario)) {
+    gerentes = [filterPropietario];
+  } else {
+    asesores = [filterPropietario];
+  }
+}
+
+else if (crm.filterZona) {
+  const zona = ZONAS[crm.filterZona] || [];
+
+  asesores = zona.filter(p => !ASESORES_GERENTES.includes(p));
+  gerentes = zona.filter(p => ASESORES_GERENTES.includes(p));
+}
+
+else {
+  asesores = crm.options.asesores;
+  gerentes = crm.options.asesoresGerentes;
+}
 
   let totalAsesores = 0;
   let totalGerentes = 0;
