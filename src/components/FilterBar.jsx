@@ -10,6 +10,7 @@ export function FilterBar({
   activeFilters, clearFilters,
   onChangePage,
   onlyGerentes, setOnlyGerentes,
+  filterZona, setFilterZona,
 }) {
   function handle(setter) {
     return e => { setter(e.target.value); onChangePage(1) }
@@ -35,6 +36,15 @@ export function FilterBar({
             value={search}
             onChange={handle(setSearch)}
           />
+        </div>
+
+        <div className="field">
+          <span className="field-lbl">Zona</span>
+          <select value={filterZona} onChange={handle(setFilterZona)}>
+            <option value="">Todos</option>
+            <option value="ORIENTE">Oriente</option>
+            <option value="OCCIDENTE">Occidente</option>
+          </select>
         </div>
 
         <div className="field">

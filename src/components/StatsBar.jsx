@@ -1,5 +1,21 @@
 export function StatsBar({ crm, filterPropietario }) {
 
+  const ZONAS = {
+    ORIENTE: [
+      'LOPEZ JAIMES JUAN SEBASTIAN',
+      'GUAVITA DIAZ CINDY',
+      'RODRIGUEZ DAZA LUIS EDUARDO',
+      'MORALES HERRERA STEWAR ALEXANDER',
+      'MARTINEZ JUAN DAVID'
+    ],
+    OCCIDENTE: [
+      'CERON PUENTES ALEJANDRO',
+      'ARIAS ROGELES SIMON',
+      'AVELLANEDA CASTAÑEDA MARTHA',
+      'DITTA VALLEJO LEYNER DALLAN'
+    ]
+  };
+
   const META_ASESOR = {
   gestion: 25,
   visitas: 100,
@@ -16,6 +32,14 @@ export function StatsBar({ crm, filterPropietario }) {
     'JULIO CESAR DIAZ COLORADO',
     'MICHAEL JHESIT OSORIO RIOS'
   ];
+
+  const normalizarNombre = (str = '') =>
+  str
+    .toUpperCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .split(' ')
+    .sort()
+    .join(' ');
 
   const calcDias = () => {
     const hoy = new Date();
@@ -39,10 +63,20 @@ export function StatsBar({ crm, filterPropietario }) {
 
   const asesoresUnicos = [
   ...new Set(crm.filtered.map(r => r.propietario).filter(Boolean))
+    ];
+  const propietariosFiltrados = [
+    ...new Set(crm.filtered.map(r => r.propietario).filter(Boolean))
   ];
 
-  const asesores = crm.options.asesores;
-  const gerentes = crm.options.asesoresGerentes;
+  const gerentesNormalizados = ASESORES_GERENTES.map(normalizarNombre);
+
+  const gerentes = propietariosFiltrados.filter(p =>
+    gerentesNormalizados.includes(normalizarNombre(p))
+  );
+
+  const asesores = propietariosFiltrados.filter(p =>
+    !gerentesNormalizados.includes(normalizarNombre(p))
+  );
 
   let totalAsesores = 0;
   let totalGerentes = 0;

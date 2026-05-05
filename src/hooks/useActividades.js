@@ -11,6 +11,7 @@ function mesActual() {
 }
 
 export function useActividades() {
+  const [filterZona, setFilterZona] = useState('');
   const [data, setData]       = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
@@ -49,6 +50,21 @@ export function useActividades() {
     }, [])
 
   const ASESORES_GERENTES = ['JULIO CESAR DIAZ COLORADO','MICHAEL JHESIT OSORIO RIOS']
+  const ZONAS = {
+    ORIENTE: [
+      'LOPEZ JAIMES JUAN SEBASTIAN',
+      'GUAVITA DIAZ CINDY',
+      'RODRIGUEZ DAZA LUIS EDUARDO',
+      'MORALES HERRERA STEWAR ALEXANDER',
+      'MARTINEZ JUAN DAVID'
+    ],
+    OCCIDENTE: [
+      'CERON PUENTES ALEJANDRO',
+      'ARIAS ROGELES SIMON',
+      'AVELLANEDA CASTAÑEDA MARTHA',
+      'DITTA VALLEJO LEYNER DALLAN'
+    ]
+  };
   
   const options = useMemo(() => {
   const propietarios = [...new Set(data.map(r => r.propietario).filter(Boolean))].sort()
@@ -68,17 +84,35 @@ export function useActividades() {
   }
   }, [data])
  
-const filtered = useMemo(() => {
+  const filtered = useMemo(() => {
   let rows = data
 
-  if (search.trim()) {
-    const q = search.toLowerCase()
+    if (search.trim()) {
+      const q = search.toLowerCase()
+      rows = rows.filter(r =>
+        (r.nombre      || '').toLowerCase().includes(q) ||
+        (r.descripcion || '').toLowerCase().includes(q) ||
+        (r.cliente     || '').toLowerCase().includes(q) ||
+        (r.lugar       || '').toLowerCase().includes(q)
+      )
+    }
+
+  const normalizeWords = (str) =>
+  (str || '')
+    .toUpperCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, '')
+    .split(' ')
+    .filter(Boolean)
+    .sort()
+    .join(' ');
+
+  if (filterZona) {
+    const zonaList = ZONAS[filterZona].map(normalizeWords);
+
     rows = rows.filter(r =>
-      (r.nombre      || '').toLowerCase().includes(q) ||
-      (r.descripcion || '').toLowerCase().includes(q) ||
-      (r.cliente     || '').toLowerCase().includes(q) ||
-      (r.lugar       || '').toLowerCase().includes(q)
-    )
+      zonaList.includes(normalizeWords(r.propietario))
+    );
   }
 
   if (filterEstado) rows = rows.filter(r => r.estado === filterEstado)
@@ -113,7 +147,8 @@ const filtered = useMemo(() => {
   dateTo,
   sortKey,
   sortDir,
-  onlyGerentes
+  onlyGerentes,
+  filterZona
 ])
   
 
@@ -173,6 +208,7 @@ const filtered = useMemo(() => {
     dateFrom, setDateFrom,
     dateTo, setDateTo,
     activeFilters, clearFilters,
-    onlyGerentes, setOnlyGerentes
+    onlyGerentes, setOnlyGerentes,
+    filterZona, setFilterZona,
   }
 }

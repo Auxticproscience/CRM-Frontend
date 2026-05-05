@@ -54,6 +54,8 @@ export default function GestionesView() {
           onChangePage={crm.setPage}
           onlyGerentes={crm.onlyGerentes}
           setOnlyGerentes={crm.setOnlyGerentes}
+          filterZona={crm.filterZona}
+          setFilterZona={crm.setFilterZona}
         />
 
         <div className="table-section">
