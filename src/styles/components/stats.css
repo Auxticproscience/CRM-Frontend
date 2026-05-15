@@ -46,7 +46,8 @@
 
 .fiel-progres1,
 .fiel-progres2,
-.fiel-progres3 {
+.fiel-progres3,
+.fiel-progres4 {
   display: flex;
   flex-direction: column;
   gap: 8px;

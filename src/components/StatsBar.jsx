@@ -132,6 +132,8 @@ const metaLlamadas = Math.round(
   const pVisitas  = calcPct(stats.visitas,  metaVisitas);
   const pLlamadas = calcPct(stats.llamadas, metaLlamadas);
 
+  const pTotal = (pGestion + pVisitas + pLlamadas) / 3;
+
   const getColor = (pct) => {
     if (pct >= 100) return 'rgb(19,199,28)';   // verde
     if (pct >= 60)  return 'rgb(255,180,0)';   // amarillo
@@ -213,6 +215,19 @@ const metaLlamadas = Math.round(
           <span className="stat-label">Llamadas · {dias}d · {labelAsesor}</span>
           <span className="stat-value">
             {crm.loading ? '…' : stats.llamadas.toLocaleString('es-CO')}
+          </span>
+        </div>
+      </div>
+
+      {/* CUMPLIMIENTO TOTAL */}
+      <div className="fiel-progres4">
+        {crm.loading ? '…' : (
+          <ProgressGroup pct={pTotal} actual={pTotal} meta={100} />
+        )}
+        <div className="stat-card">
+          <span className="stat-label">Cumplimiento total · {labelAsesor}</span>
+          <span className="stat-value">
+            {crm.loading ? '…' : `${pTotal.toFixed(1)}%`}
           </span>
         </div>
       </div>
