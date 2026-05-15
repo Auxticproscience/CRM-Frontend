@@ -135,9 +135,9 @@ const metaLlamadas = Math.round(
   const pTotal = (pGestion + pVisitas + pLlamadas) / 3;
 
   const getColor = (pct) => {
-    if (pct >= 100) return 'rgb(19,199,28)';   // verde
-    if (pct >= 60)  return 'rgb(255,180,0)';   // amarillo
-    return 'rgb(220,50,50)';                   // rojo
+    if (pct >= 100) return 'rgb(19,199,28)';
+    if (pct >= 60)  return 'rgb(255,180,0)';
+    return 'rgb(220,50,50)';
   };
 
   const labelAsesor = crm.onlyGerentes
@@ -221,9 +221,6 @@ const metaLlamadas = Math.round(
 
       {/* CUMPLIMIENTO TOTAL */}
       <div className="fiel-progres4">
-        {crm.loading ? '…' : (
-          <ProgressGroup pct={pTotal} actual={pTotal} meta={100} />
-        )}
         <div className="stat-card">
           <span className="stat-label">Cumplimiento total · {labelAsesor}</span>
           <span className="stat-value">
