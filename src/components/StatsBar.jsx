@@ -23,9 +23,9 @@ export function StatsBar({ crm, filterPropietario }) {
   };
 
   const META_GERENTE = {
-    gestion: 25,
-    visitas: 50,
-    llamadas: 75
+    gestion: 0,
+    visitas: 0,
+    llamadas: 0
   };
 
   const ASESORES_GERENTES = [
