@@ -104,7 +104,7 @@ export default function LandingView({ setPage }) {
         </div>
 
         <footer className="lp-footer">
-          © 2026 ProScience · Datos actualizados diariamente
+          Luis Velez · © 2026 ProScience · Datos actualizados diariamente
         </footer>
       </main>
     </div>
