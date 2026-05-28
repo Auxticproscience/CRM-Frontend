@@ -32,7 +32,7 @@ export function useActividades() {
   const [sortDir, setSortDir] = useState('desc')
 
   const [page, setPage] = useState(1)
-  const PAGE_SIZE       = 25
+  const PAGE_SIZE = 25
 
   useEffect(() => {
       setLoading(true)
