@@ -4,6 +4,7 @@ import { ComingSoon } from "./components/ComingSoon";
 import LandingView from "./views/LandingView";
 import GestionesView from "./views/GestionesView";
 import CotizacionesView from "./views/CotizacionesView";
+import DashboardView from "./views/DashboardView";
 import AppLoader from "./components/AppLoader";
 
 export default function App() {
