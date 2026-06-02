@@ -2,7 +2,7 @@ export function Navbar({ page, setPage }) {
   const tabs = [
     { id: "gestiones", label: "Gestiones" },
     { id: "cotizaciones", label: "Cotizaciones" },
-    { id: "pedidos", label: "Pedidos" },
+    { id: "dashboard", label: "Dashboard" },
   ]
 
   return (

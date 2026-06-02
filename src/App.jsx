@@ -29,7 +29,7 @@ export default function App() {
         {page === "landing" && <LandingView setPage={setPage} />}
         {page === "gestiones" && <GestionesView />}
         {page === "cotizaciones" && <CotizacionesView />}
-        {page === "pedidos" && <ComingSoon title="Pedidos" />}
+        {page === "dashboard" && <DashboardView />}
       </main>
     </div>
   );
