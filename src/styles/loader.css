@@ -53,17 +53,18 @@
 }
 
 .progress-fill {
+  width: 45%;
   height: 100%;
   background: linear-gradient(90deg, #7c6fee, #5eead4);
-  transition: width 0.2s ease;
-}
-
-.progress-text {
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.5);
+  animation: loader-progress 1s ease-in-out infinite;
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
+}
+
+@keyframes loader-progress {
+  from { transform: translateX(-120%); }
+  to { transform: translateX(240%); }
 }
