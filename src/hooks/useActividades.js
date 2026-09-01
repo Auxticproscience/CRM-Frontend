@@ -1,28 +1,26 @@
 import { useState, useEffect, useMemo } from 'react'
-import { fetchActividades } from '../services/api'
-
+import { fetchCotizaciones } from '../services/api'
 
 function mesActual() {
-  const now   = new Date()
-  const y     = now.getFullYear()
-  const m     = String(now.getMonth() + 1).padStart(2, '0')
-  const last  = new Date(y, now.getMonth() + 1, 0).getDate()
+  const now  = new Date()
+  const y    = now.getFullYear()
+  const m    = String(now.getMonth() + 1).padStart(2, '0')
+  const last = new Date(y, now.getMonth() + 1, 0).getDate()
   return { from: `${y}-${m}-01`, to: `${y}-${m}-${last}` }
 }
 
-export function useActividades() {
-  const [filterZona, setFilterZona] = useState('');
+export function useCotizaciones() {
   const [data, setData]       = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
-  
 
-  const [onlyGerentes, setOnlyGerentes] = useState(false);
-  const [search, setSearch]                       = useState('')
-  const [filterEstado, setFilterEstado]           = useState('')
-  const [filterTipo, setFilterTipo]               = useState('')
-  const [filterPropietario, setFilterPropietario] = useState('')
-  const [filterCliente, setFilterCliente]         = useState('')
+  const [search, setSearch]                         = useState('')
+  const [filterPropietario, setFilterPropietario]   = useState('')
+  const [filterCliente, setFilterCliente]           = useState('')
+  const [filterCentro, setFilterCentro]             = useState('')
+  const [filterTipoCliente, setFilterTipoCliente]   = useState('')
+  const [filterCondicion, setFilterCondicion]       = useState('')
+  const [filterListaPrecio, setFilterListaPrecio]   = useState('')
 
   const defaults = mesActual()
   const [dateFrom, setDateFrom] = useState(defaults.from)
@@ -32,125 +30,117 @@ export function useActividades() {
   const [sortDir, setSortDir] = useState('desc')
 
   const [page, setPage] = useState(1)
-  const PAGE_SIZE = 25
+  const PAGE_SIZE       = 25
+
+  const COLS_DISPONIBLES = [
+    { key: 'fechaCreacion',      label: 'Fecha creación',   default: true  },
+    { key: 'numeroCotizacion',   label: 'Cotización',       default: true  },
+    { key: 'propietario',        label: 'Propietario',      default: true  },
+    { key: 'cliente',            label: 'Cliente',          default: true  },
+    { key: 'valorTotal',         label: 'Valor total',      default: true  },
+    { key: 'centroOperacion',    label: 'Centro operación', default: true  },
+    { key: 'creadoPor',          label: 'Creado por',       default: false },
+    { key: 'vendedor',           label: 'Vendedor',         default: false },
+    { key: 'puntoEnvio',         label: 'Punto de envío',   default: false },
+    { key: 'tipoCliente',        label: 'Tipo cliente',     default: false },
+    { key: 'listaPrecio',        label: 'Lista de precios', default: false },
+    { key: 'condicionPago',      label: 'Condición pago',   default: false },
+    { key: 'fechaEntrega',       label: 'Fecha entrega',    default: false },
+    { key: 'valorBruto',         label: 'Valor bruto',      default: false },
+    { key: 'valorSubtotal',      label: 'Subtotal',         default: false },
+    { key: 'impuestos',          label: 'Impuestos',        default: false },
+    { key: 'descuentos',         label: 'Descuentos',       default: false },
+    { key: 'pedidoErp',          label: 'Pedido ERP',       default: false },
+  ]
+
+  const [colsVisibles, setColsVisibles] = useState(
+    () => new Set(COLS_DISPONIBLES.filter(c => c.default).map(c => c.key))
+  )
+
+  function toggleCol(key) {
+    setColsVisibles(prev => {
+      const next = new Set(prev)
+      next.has(key) ? next.delete(key) : next.add(key)
+      return next
+    })
+  }
 
   useEffect(() => {
-      setLoading(true)
-      setError(null)
+    const controller = new AbortController()
+    let active = true
 
-      fetchActividades()
-        .then(d => {
-          setData(d)
-          setLoading(false)
-        })
-        .catch(e => {
-          setError(e.message)
-          setLoading(false)
-        })
-    }, [])
+    setLoading(true)
+    setError(null)
 
-  const ASESORES_GERENTES = ['JULIO CESAR DIAZ COLORADO','MICHAEL JHESIT OSORIO RIOS']
-  const ZONAS = {
-    ORIENTE: [
-      'JUAN SEBASTIAN LOPEZ JAIMES',
-      'CINDY GUAVITA DIAZ',
-      'LUIS EDUARDO RODRIGUEZ DAZA',
-      'STEWAR ALEXANDER MORALES HERRERA',
-      'JUAN DAVID MARTINEZ DIOSA'
-    ],
-    OCCIDENTE: [
-      'ALEJANDRO CERON PUENTES',
-      'SIMON ARIAS ROGELES',
-      'MARTHA PATRICIA AVELLANEDA CASTAÑEDA',
-      'LEYNER DALLAN DITTA VALLEJO'
-    ]
-  };
-  
+    fetchCotizaciones({
+      desde: dateFrom || undefined,
+      hasta: dateTo || undefined,
+      signal: controller.signal,
+    })
+      .then(rows => {
+        if (!active) return
+        setData(rows)
+        setLoading(false)
+      })
+      .catch(e => {
+        if (!active || e.name === 'AbortError') return
+        setError(e.message)
+        setLoading(false)
+      })
+
+    return () => {
+      active = false
+      controller.abort()
+    }
+  }, [dateFrom, dateTo])
+
   const options = useMemo(() => {
-  const propietarios = [...new Set(data.map(r => r.propietario).filter(Boolean))].sort()
-
-  const asesoresGerentes = propietarios.filter(p => ASESORES_GERENTES.includes(p))
-  const asesores = propietarios.filter(p => !ASESORES_GERENTES.includes(p))
-
-  const set = k => [...new Set(data.map(r => r[k]).filter(Boolean))].sort()
-
-  return {
-    estados: set('estado'),
-    tipos: set('tipo'),
-    clientes: set('cliente'),
-    propietarios,
-    asesores,
-    asesoresGerentes
-  }
+    const set = k => [...new Set(data.map(r => r[k]).filter(Boolean))].sort()
+    return {
+      propietarios:  set('propietario'),
+      clientes:      set('cliente'),
+      centros:       set('centroOperacion'),
+      tiposCliente:  set('tipoCliente'),
+      condiciones:   set('condicionPago'),
+      listasPrecio:  set('listaPrecio'),
+    }
   }, [data])
- 
+
   const filtered = useMemo(() => {
-  let rows = data
+    let rows = data
 
     if (search.trim()) {
       const q = search.toLowerCase()
       rows = rows.filter(r =>
-        (r.nombre      || '').toLowerCase().includes(q) ||
-        (r.descripcion || '').toLowerCase().includes(q) ||
-        (r.cliente     || '').toLowerCase().includes(q) ||
-        (r.lugar       || '').toLowerCase().includes(q)
+        (r.numeroCotizacion || '').toLowerCase().includes(q) ||
+        (r.cliente          || '').toLowerCase().includes(q) ||
+        (r.propietario      || '').toLowerCase().includes(q) ||
+        (r.pedidoErp        || '').toLowerCase().includes(q) ||
+        (r.puntoEnvio       || '').toLowerCase().includes(q)
       )
     }
 
-  const normalizeWords = (str) =>
-  (str || '')
-    .toUpperCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, '')
-    .split(' ')
-    .filter(Boolean)
-    .sort()
-    .join(' ');
+    if (filterPropietario) rows = rows.filter(r => r.propietario    === filterPropietario)
+    if (filterCliente)     rows = rows.filter(r => r.cliente         === filterCliente)
+    if (filterCentro)      rows = rows.filter(r => r.centroOperacion === filterCentro)
+    if (filterTipoCliente) rows = rows.filter(r => r.tipoCliente     === filterTipoCliente)
+    if (filterCondicion)   rows = rows.filter(r => r.condicionPago   === filterCondicion)
+    if (filterListaPrecio) rows = rows.filter(r => r.listaPrecio     === filterListaPrecio)
 
-  if (filterZona) {
-    const zonaList = ZONAS[filterZona].map(normalizeWords);
+    if (dateFrom) rows = rows.filter(r => r.fechaCreacion >= dateFrom)
+    if (dateTo)   rows = rows.filter(r => r.fechaCreacion <= dateTo + 'T23:59:59')
 
-    rows = rows.filter(r =>
-      zonaList.includes(normalizeWords(r.propietario))
-    );
-  }
+    rows = [...rows].sort((a, b) => {
+      const va = a[sortKey] ?? ''
+      const vb = b[sortKey] ?? ''
+      const cmp = va < vb ? -1 : va > vb ? 1 : 0
+      return sortDir === 'asc' ? cmp : -cmp
+    })
 
-  if (filterEstado) rows = rows.filter(r => r.estado === filterEstado)
-  if (filterTipo)   rows = rows.filter(r => r.tipo === filterTipo)
-
-  if (onlyGerentes) {
-    rows = rows.filter(r => ASESORES_GERENTES.includes(r.propietario))
-  }
-
-  if (filterPropietario) rows = rows.filter(r => r.propietario === filterPropietario)
-  if (filterCliente)     rows = rows.filter(r => r.cliente === filterCliente)
-
-  if (dateFrom) rows = rows.filter(r => r.fechaCreacion >= dateFrom)
-  if (dateTo)   rows = rows.filter(r => r.fechaCreacion <= dateTo + 'T23:59:59')
-
-  rows = [...rows].sort((a, b) => {
-    const va = a[sortKey] ?? ''
-    const vb = b[sortKey] ?? ''
-    const cmp = va < vb ? -1 : va > vb ? 1 : 0
-    return sortDir === 'asc' ? cmp : -cmp
-  })
-
-  return rows
-}, [
-  data,
-  search,
-  filterEstado,
-  filterTipo,
-  filterPropietario,
-  filterCliente,
-  dateFrom,
-  dateTo,
-  sortKey,
-  sortDir,
-  onlyGerentes,
-  filterZona
-])
-  
+    return rows
+  }, [data, search, filterPropietario, filterCliente, filterCentro,
+      filterTipoCliente, filterCondicion, filterListaPrecio,
+      dateFrom, dateTo, sortKey, sortDir])
 
   const paginated = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE
@@ -166,49 +156,59 @@ export function useActividades() {
   }
 
   function clearFilters() {
-  setSearch('')
-  setFilterEstado('')
-  setFilterTipo('')
-  setFilterPropietario('')
-  setFilterCliente('')
-  setDateFrom('')
-  setDateTo('')
-  setOnlyGerentes(false)
-  setPage(1)
-}
+    setSearch('')
+    setFilterPropietario('')
+    setFilterCliente('')
+    setFilterCentro('')
+    setFilterTipoCliente('')
+    setFilterCondicion('')
+    setFilterListaPrecio('')
+    setDateFrom('')
+    setDateTo('')
+    setPage(1)
+  }
 
   const activeFilters = [
-    search            && { key: 'search',  label: `"${search}"`,       clear: () => setSearch('') },
-    filterEstado      && { key: 'estado',  label: filterEstado,        clear: () => setFilterEstado('') },
-    filterTipo        && { key: 'tipo',    label: filterTipo,          clear: () => setFilterTipo('') },
-    filterPropietario && { key: 'prop',    label: filterPropietario,   clear: () => setFilterPropietario('') },
-    filterCliente     && { key: 'cliente', label: filterCliente,       clear: () => setFilterCliente('') },
-    dateFrom          && { key: 'from',    label: `Desde ${dateFrom}`, clear: () => setDateFrom('') },
-    dateTo            && { key: 'to',      label: `Hasta ${dateTo}`,   clear: () => setDateTo('') },
+    search            && { key: 'search',   label: `"${search}"`,         clear: () => setSearch('') },
+    filterPropietario && { key: 'prop',     label: filterPropietario,     clear: () => setFilterPropietario('') },
+    filterCliente     && { key: 'cliente',  label: filterCliente,         clear: () => setFilterCliente('') },
+    filterCentro      && { key: 'centro',   label: filterCentro,          clear: () => setFilterCentro('') },
+    filterTipoCliente && { key: 'tipo',     label: filterTipoCliente,     clear: () => setFilterTipoCliente('') },
+    filterCondicion   && { key: 'cond',     label: filterCondicion,       clear: () => setFilterCondicion('') },
+    filterListaPrecio && { key: 'lista',    label: filterListaPrecio,     clear: () => setFilterListaPrecio('') },
+    dateFrom          && { key: 'from',     label: `Desde ${dateFrom}`,   clear: () => setDateFrom('') },
+    dateTo            && { key: 'to',       label: `Hasta ${dateTo}`,     clear: () => setDateTo('') },
   ].filter(Boolean)
 
-  
   const stats = useMemo(() => {
-    const gestion  = filtered.filter(r => r.tipo === 'Gestión').length
-    const visitas  = filtered.filter(r => r.tipo === 'Visita').length
-    const llamadas = filtered.filter(r => r.tipo === 'Llamadas').length
-    const totalMes = gestion + visitas + llamadas;
-    return { totalMes, gestion, visitas, llamadas }
-  }, [filtered])
+  const conPedido     = filtered.filter(r => r.pedidoErp)
+  const sinPedido     = filtered.filter(r => !r.pedidoErp)
 
   return {
-    loading, error, options, filtered, paginated,
-    stats, totalPages, page, setPage,
+    total:           filtered.length,
+    valorSubtotal:   filtered.reduce((s, r) => s + (r.valorSubtotal || 0), 0),
+    conPedido:       conPedido.length,
+    valorConPedido:  conPedido.reduce((s, r) => s + (r.valorSubtotal || 0), 0),
+    sinPedido:       sinPedido.length,
+    valorSinPedido:  sinPedido.reduce((s, r) => s + (r.valorSubtotal || 0), 0),
+  }
+}, [filtered])
+
+  return {
+    loading, error, data, options,
+    filtered, paginated, stats,
+    totalPages, page, setPage,
     sortKey, sortDir, toggleSort,
     search, setSearch,
-    filterEstado, setFilterEstado,
-    filterTipo, setFilterTipo,
     filterPropietario, setFilterPropietario,
     filterCliente, setFilterCliente,
+    filterCentro, setFilterCentro,
+    filterTipoCliente, setFilterTipoCliente,
+    filterCondicion, setFilterCondicion,
+    filterListaPrecio, setFilterListaPrecio,
     dateFrom, setDateFrom,
     dateTo, setDateTo,
     activeFilters, clearFilters,
-    onlyGerentes, setOnlyGerentes,
-    filterZona, setFilterZona,
+    COLS_DISPONIBLES, colsVisibles, toggleCol,
   }
 }

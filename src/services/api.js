@@ -1,11 +1,23 @@
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 
 async function request(endpoint, options = {}) {
+  if (!BASE_URL) {
+    throw new Error('No se configuró VITE_API_URL.');
+  }
+
   const res = await fetch(`${BASE_URL}${endpoint}`, options);
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Error ${res.status}: ${text}`);
+    let message = `Error ${res.status} al consultar el servidor.`;
+
+    try {
+      const payload = await res.json();
+      message = payload.mensaje || payload.message || message;
+    } catch {
+      throw new Error(message, "Error al analizar la respuesta del servidor.");
+    }
+
+    throw new Error(message);
   }
 
   return res.json();
@@ -16,36 +28,32 @@ export function fetchActividades(propietarioId = null) {
   return request(`/api/actividades${query}`);
 }
 
-export function fetchCotizaciones() {
-  return request('/api/cotizaciones');
-}
+export async function fetchCotizaciones({ desde, hasta, signal } = {}) {
+  const rows = [];
+  let page = 0;
 
-export function fetchCotizacionById(id) {
-  return request(`/api/cotizaciones/${id}`);
-}
+  while (true) {
+    const query = new URLSearchParams({
+      page: String(page),
+      size: '200',
+    });
 
-export function createCotizacion(data) {
-  return request('/api/cotizaciones', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-}
+    if (desde) query.set('desde', desde);
+    if (hasta) query.set('hasta', hasta);
 
-export function updateCotizacion(id, data) {
-  return request(`/api/cotizaciones/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-}
+    const result = await request(`/api/cotizaciones?${query.toString()}`, { signal });
 
-export function deleteCotizacion(id) {
-  return request(`/api/cotizaciones/${id}`, {
-    method: 'DELETE',
-  });
+    if (!result || !Array.isArray(result.content)) {
+      throw new Error('El servidor devolvió un formato de cotizaciones no válido.');
+    }
+
+    rows.push(...result.content);
+
+    const totalPages = Number(result.totalPages) || 0;
+    if (result.last === true || page + 1 >= totalPages) break;
+
+    page += 1;
+  }
+
+  return rows;
 }
