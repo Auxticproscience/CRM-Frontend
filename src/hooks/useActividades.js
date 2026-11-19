@@ -69,12 +69,35 @@ function useActividades() {
   };
   
   const options = useMemo(() => {
-  const propietarios = [...new Set(data.map(r => r.propietario).filter(Boolean))].sort()
+  const normalizar = (nombre = '') =>
+    nombre
+      .toUpperCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .split(/\s+/)
+      .sort()
+      .join(' ');
 
-  const asesoresGerentes = propietarios.filter(p => ASESORES_GERENTES.includes(p))
-  const asesores = propietarios.filter(p => !ASESORES_GERENTES.includes(p))
+  const propietarios = [
+    ...new Set(data.map(r => r.propietario).filter(Boolean))
+  ].sort();
 
-  const set = k => [...new Set(data.map(r => r[k]).filter(Boolean))].sort()
+  const nombresGerentes = new Set(
+    ASESORES_GERENTES.map(normalizar)
+  );
+
+  const asesoresGerentes = propietarios.filter(p =>
+    nombresGerentes.has(normalizar(p))
+  );
+
+  const asesores = propietarios.filter(p =>
+    !nombresGerentes.has(normalizar(p))
+  );
+
+  const set = key => [
+    ...new Set(data.map(r => r[key]).filter(Boolean))
+  ].sort();
 
   return {
     estados: set('estado'),
@@ -82,10 +105,12 @@ function useActividades() {
     clientes: set('cliente'),
     propietarios,
     asesores,
-    asesoresGerentes
-  }
-  }, [data])
- 
+    asesoresGerentes,
+
+    asesoresFiltro: propietarios,
+  };
+}, [data]);
+  
   const filtered = useMemo(() => {
   let rows = data
 

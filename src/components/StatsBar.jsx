@@ -90,7 +90,7 @@ else if (crm.filterZona) {
 }
 
 else {
-  asesores = crm.options.asesores;
+  asesores = crm.options.asesoresFiltro;
   gerentes = crm.options.asesoresGerentes;
 }
 
