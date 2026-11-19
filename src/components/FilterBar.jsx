@@ -79,12 +79,21 @@ export function FilterBar({
 
         <div className="field">
           <span className="field-lbl">Asesor</span>
-          <select value={filterPropietario} onChange={handle(setFilterPropietario)}>
-              <option value="">Todos</option>
-              {options.asesores.map(p => (
-                <option key={p} value={p}>{p}</option>
-              ))}
-          </select>
+         <select
+  value={filterPropietario}
+  onChange={e => {
+    setFilterPropietario(e.target.value);
+    onChangePage(1);
+  }}
+>
+  <option value="">Todos</option>
+
+  {options.propietarios.map(nombre => (
+    <option key={nombre} value={nombre}>
+      {nombre}
+    </option>
+  ))}
+</select>
         </div>
       </div>
 

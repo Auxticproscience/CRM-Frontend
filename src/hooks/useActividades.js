@@ -146,10 +146,18 @@ function useActividades() {
   if (filterTipo)   rows = rows.filter(r => r.tipo === filterTipo)
 
   if (onlyGerentes) {
-    rows = rows.filter(r => ASESORES_GERENTES.includes(r.propietario))
-  }
+  const gerentesNormalizados = ASESORES_GERENTES.map(normalizeWords);
 
-  if (filterPropietario) rows = rows.filter(r => r.propietario === filterPropietario)
+  rows = rows.filter(r =>
+    gerentesNormalizados.includes(normalizeWords(r.propietario))
+  );
+}
+
+if (filterPropietario) {
+  rows = rows.filter(r =>
+    normalizeWords(r.propietario) === normalizeWords(filterPropietario)
+  );
+}
   if (filterCliente)     rows = rows.filter(r => r.cliente === filterCliente)
 
   if (dateFrom) rows = rows.filter(r => r.fechaCreacion >= dateFrom)
