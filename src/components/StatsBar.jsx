@@ -2,7 +2,6 @@ export function StatsBar({ crm, filterPropietario }) {
 
   const ZONAS = {
     ORIENTE: [
-      'LOPEZ JAIMES JUAN SEBASTIAN',
       'GUAVITA DIAZ CINDY',
       'RODRIGUEZ DAZA LUIS EDUARDO',
       'MORALES HERRERA STEWAR ALEXANDER',
@@ -35,13 +34,26 @@ export function StatsBar({ crm, filterPropietario }) {
     'MICHAEL JHESIT OSORIO RIOS'
   ];
 
-  const normalizarNombre = (str = '') =>
+ const normalizarNombre = (str = '') =>
   str
     .toUpperCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .split(' ')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .split(/\s+/)
     .sort()
     .join(' ');
+
+const METAS_INDIVIDUALES = {
+  [normalizarNombre('JOSE FERNANDO FORERO CARDONA')]: {
+    gestion: 50,
+    visitas: 70,
+    llamadas: 100,
+  },
+};
+
+const obtenerMetaAsesor = (nombre) =>
+  METAS_INDIVIDUALES[normalizarNombre(nombre)] ?? META_ASESOR;
 
   const calcDias = () => {
     const hoy = new Date();
@@ -94,35 +106,29 @@ else {
   gerentes = crm.options.asesoresGerentes;
 }
 
-  let totalAsesores = 0;
-  let totalGerentes = 0;
+ const metasAsesores = asesores.reduce(
+  (total, asesor) => {
+    const meta = obtenerMetaAsesor(asesor);
 
-if (crm.onlyGerentes) {
-  totalGerentes = gerentes.length;
-} else if (filterPropietario) {
-  if (ASESORES_GERENTES.includes(filterPropietario)) {
-    totalGerentes = 1;
-  } else {
-    totalAsesores = 1;
-  }
-} else {
-  totalAsesores = asesores.length;
-  totalGerentes = gerentes.length;
-}
+    return {
+      gestion: total.gestion + meta.gestion,
+      visitas: total.visitas + meta.visitas,
+      llamadas: total.llamadas + meta.llamadas,
+    };
+  },
+  { gestion: 0, visitas: 0, llamadas: 0 }
+);
 
-  const metaGestion = Math.round(
-  (totalAsesores * META_ASESOR.gestion) +
-  (totalGerentes * META_GERENTE.gestion)
+const metaGestion = Math.round(
+  metasAsesores.gestion + gerentes.length * META_GERENTE.gestion
 );
 
 const metaVisitas = Math.round(
-  (totalAsesores * META_ASESOR.visitas) +
-  (totalGerentes * META_GERENTE.visitas)
+  metasAsesores.visitas + gerentes.length * META_GERENTE.visitas
 );
 
 const metaLlamadas = Math.round(
-  (totalAsesores * META_ASESOR.llamadas) +
-  (totalGerentes * META_GERENTE.llamadas)
+  metasAsesores.llamadas + gerentes.length * META_GERENTE.llamadas
 );
 
   const stats = crm.stats;
