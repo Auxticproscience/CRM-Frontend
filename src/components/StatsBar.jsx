@@ -60,6 +60,16 @@ const METAS_INDIVIDUALES = {
     visitas: 20,
     llamadas: 100,
   },
+  [normalizarNombre('JULIO CESAR DIAZ COLORADO')]: {
+    gestion: 101,
+    visitas: 60,
+    llamdas: 100
+  },
+  [normalizarNombre('MICHAEL JHESIT OSORIO RIOS')]: {
+    gestion: 101,
+    visitas: 60,
+    llamdas: 100
+  },
 };
 
 const obtenerMetaAsesor = (nombre) =>
