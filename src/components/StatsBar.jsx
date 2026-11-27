@@ -55,6 +55,11 @@ const METAS_INDIVIDUALES = {
     visitas: 25,
     llamadas: 125,
   },
+  [normalizarNombre('LUIS GUILLERMO HERNANDEZ BARRAZA')]: {
+    gestion: 75,
+    visitas: 20,
+    llamadas: 100,
+  },
 };
 
 const obtenerMetaAsesor = (nombre) =>
