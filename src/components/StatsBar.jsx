@@ -50,6 +50,11 @@ const METAS_INDIVIDUALES = {
     visitas: 70,
     llamadas: 100,
   },
+  [normalizarNombre('MONICA ANDREA LOPERA AGUDELO')]: {
+    gestion: 100,
+    visitas: 25,
+    llamadas: 125,
+  },
 };
 
 const obtenerMetaAsesor = (nombre) =>
